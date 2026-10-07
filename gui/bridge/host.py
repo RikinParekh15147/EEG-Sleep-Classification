@@ -55,11 +55,10 @@ def cli(settings, args, request_id, timeout=600):
     command=[executable,'--auth','oauth2','--config',str(config),'--logtostderr',*args]
     with COMMAND_LOCK:
         master,slave=pty.openpty()
-        def terminal():
-            os.setsid()
-            import fcntl, termios
-            fcntl.ioctl(0,termios.TIOCSCTTY,0)
-        process=subprocess.Popen(command,stdin=slave,stdout=slave,stderr=slave,preexec_fn=terminal,close_fds=True)
+        # A small exec wrapper acquires the controlling terminal without preexec_fn
+        # (the host is threaded; Python preexec hooks are unsafe in threaded parents).
+        terminal_code='import os,fcntl,termios,sys;os.setsid();fcntl.ioctl(0,termios.TIOCSCTTY,0);os.execv(sys.argv[1],sys.argv[1:])'
+        process=subprocess.Popen([sys.executable,'-c',terminal_code,*command],stdin=slave,stdout=slave,stderr=slave,close_fds=True)
         os.close(slave)
         PROMPTS[request_id]=(master,process)
         decoder=codecs.getincrementaldecoder('utf-8')('replace')
@@ -79,7 +78,7 @@ def cli(settings, args, request_id, timeout=600):
                         continue
                     text=clean(decoder.decode(chunk));output+=text;line_buffer+=text
                     # Never echo authorization codes written back through the PTY.
-                    for url in re.findall(r'https://[^\s<>"\x27]+',text):
+                    for url in re.findall(r'https://[^\s<>"\x27]+',output):
                         url=url.rstrip(').,')
                         if any(host in url for host in ['accounts.google.com/','colab.research.google.com/','sdk.cloud.google.com/']):
                             if url not in seen_urls:

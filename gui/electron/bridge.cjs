@@ -34,7 +34,7 @@ class Bridge extends EventEmitter {
       if(buffer.length>8*1024*1024) { this.emit('event',{event:'log',message:'Bridge output exceeded limit.'}); this.close(); }
     });
     this.child.stderr.setEncoding('utf8');this.child.stderr.on('data',()=>this.emit('event',{event:'log',message:'WSL bridge reported an error. Check connection diagnostics.'}));
-    this.child.on('error',e=>this.fail(e));this.child.on('exit',()=>{this.child=null;this.fail(new Error('WSL bridge closed. Reconnect to continue.'));});
+    const current=this.child;current.on('error',e=>{if(this.child===current)this.fail(e);});current.on('exit',()=>{if(this.child===current){this.child=null;this.fail(new Error('WSL bridge closed. Reconnect to continue.'));}});
     await this.request('hello',{},20000);
   }
   fail(error) { for(const item of this.pending.values()) {clearTimeout(item.timer);item.reject(error);}this.pending.clear(); }

@@ -1,6 +1,7 @@
 const { spawn } = require('node:child_process');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
+require('./platform.cjs').prepare(root);
 const vite = spawn(process.execPath, [path.join(root, 'node_modules/vite/bin/vite.js')], { cwd: root, stdio: 'inherit' });
 let electron;
 async function launch() {
