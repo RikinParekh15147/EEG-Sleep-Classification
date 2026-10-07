@@ -1,0 +1,11 @@
+const { spawnSync, spawn } = require('node:child_process');
+const path = require('node:path');
+const root = path.resolve(__dirname, '..');
+const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const build = spawnSync(npm, ['run', 'build'], { cwd: root, stdio: 'inherit', shell: process.platform === 'win32' });
+if (build.status !== 0) process.exit(build.status || 1);
+const binary = require('electron');
+const env = { ...process.env }; delete env.ELECTRON_RUN_AS_NODE;
+const app = spawn(binary, ['.'], { cwd: root, stdio: 'inherit', env });
+app.on('error', e => { console.error(e.message); process.exit(1); });
+app.on('exit', code => process.exit(code || 0));

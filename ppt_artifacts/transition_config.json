@@ -1,0 +1,39 @@
+{
+  "pseudocount": 1.0,
+  "epsilon": 1e-12,
+  "emission_weight": 0.9,
+  "class_order": [
+    "Wake",
+    "N1",
+    "N2",
+    "N3",
+    "REM"
+  ],
+  "initialization": "training label prevalence with pseudocount 1 per class",
+  "initial_probabilities": [
+    0.21043295447079693,
+    0.10209578871296235,
+    0.34524669864003676,
+    0.19230011168779976,
+    0.14992444648840417
+  ],
+  "training_subjects": [
+    "SN017",
+    "SN006",
+    "SN020",
+    "SN025",
+    "SN015",
+    "SN011",
+    "SN019",
+    "SN012",
+    "SN016",
+    "SN018",
+    "SN002",
+    "SN013",
+    "SN023",
+    "SN007",
+    "SN010",
+    "SN003"
+  ],
+  "sequence_boundary": "recording and any gap != 30 seconds"
+}

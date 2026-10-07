@@ -1,0 +1,31 @@
+# 5. Train Model
+callbacks_list = [
+    tf.keras.callbacks.ModelCheckpoint(
+        BEST_MODEL_PATH,
+        monitor="val_evidential_accuracy",
+        mode="max",
+        save_best_only=True,
+        verbose=1
+    ),
+    tf.keras.callbacks.CSVLogger(CSV_LOG_PATH, append=True),
+    tf.keras.callbacks.EarlyStopping(
+        monitor="val_evidential_accuracy",
+        mode="max",
+        patience=5,
+        restore_best_weights=True,
+        verbose=1
+    )
+]
+
+print("Training the Sleep Health Profiler model...")
+history = model.fit(
+    X_train,
+    Y_train,
+    validation_data=(X_val, Y_val),
+    batch_size=BATCH_SIZE,
+    epochs=EPOCHS,
+    class_weight=CLASS_WEIGHTS,
+    callbacks=callbacks_list,
+    verbose=1
+)
+print("Training successfully completed!")

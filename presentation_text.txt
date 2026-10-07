@@ -1,0 +1,1169 @@
+
+SLIDE 1
+
+FINAL PROJECT REPORT
+Transformer-Based Sleep Stage Classification and Personalized Sleep Health Profiling
+Using Fast SCFormer-U, Evidential Learning and Soft-Viterbi Sequence Decoding
+Presented by: Rikin Parekh, Om Ahuja
+Enrollment No.: 23BIT044, 23BIT014
+Project Guide: Dr. Santosh Sathpathy
+Department: Information and Communication Technology
+Institute/University: Pandit Deendayal Energy University
+Final evaluation: 7 October 2026
+Academic engineering / AI project
+
+PROVENANCE NOTES
+Authors, enrollment numbers, guide and institution are supplied by the project owner. Full project title retained across title and subtitle. HMC-PPT-20261007-01
+
+SLIDE 2
+
+Problem Statement
+Source: HMC-PPT-20261007-01 | project scope, preprocessing_config.json
+02
+• Classify four-channel EEG into Wake, N1, N2, N3 and REM at 30-second resolution.
+• Automate epoch scoring, expose evidential uncertainty, and decode recording-level stage sequences.
+• Convert scored sequences into interpretable research sleep profiles.
+EEG
+Five-stage
+classification
+Sequence
+decoding
+Research
+profile
+Scope: academic engineering research; no diagnostic or clinical-validation claim.
+
+PROVENANCE NOTES
+Problem Statement
+Run: HMC-PPT-20261007-01
+Sources: project scope, preprocessing_config.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 3
+
+Project Objectives
+Source: HMC-PPT-20261007-01 | checkpoint_config.json, transition_config.json, biomarker_equations.md
+03
+01  Sleep-stage classification
+Predict five stages using a compact CNN–self-attention–BiLSTM evidential model.
+02  Sequence refinement
+Decode stage probabilities with training-derived transitions, separately for each recording.
+03  Subject-level profiling
+Compute source-defined biomarkers, compare with ground truth and apply research risk rules.
+
+PROVENANCE NOTES
+Project Objectives
+Run: HMC-PPT-20261007-01
+Sources: checkpoint_config.json, transition_config.json, biomarker_equations.md
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 4
+
+Dataset and Experimental Split
+Source: HMC-PPT-20261007-01 | split_summary.json, split_subjects.csv, input_repairs.json
+04
+24 recordings
+24 unique SN IDs
+16 training
+15,216 epochs
+4 validation
+3,619 epochs
+4 test
+3,773 epochs
+Total evaluated usable epochs: 22,608
+Overall counts: Wake 4,288 · N1 2,446 · N2 8,258 · N3 4,103 · REM 3,513
+Selected EEG channels: F4–M1 · C4–M1 · O2–M1 · C3–M2
+Test IDs: SN009, SN001, SN004, SN022
+SN001 correction: 190 stored epochs → 854 EDF-derived epochs. Original data preserved.
+No subject/recording ID appears in more than one split.
+
+PROVENANCE NOTES
+Dataset and Experimental Split
+Run: HMC-PPT-20261007-01
+Sources: split_summary.json, split_subjects.csv, input_repairs.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+Full split: {"train": ["SN017", "SN006", "SN020", "SN025", "SN015", "SN011", "SN019", "SN012", "SN016", "SN018", "SN002", "SN013", "SN023", "SN007", "SN010", "SN003"], "val": ["SN024", "SN005", "SN021", "SN008"], "test": ["SN009", "SN001", "SN004", "SN022"]}
+
+SLIDE 5
+
+EEG Preprocessing
+Source: HMC-PPT-20261007-01 | preprocessing_config.json, eeg_example_metadata.json
+05
+Channel selection → 50 Hz notch → 0.3–35 Hz bandpass → resample 256→100 Hz
+30-second epochs → channel-wise epoch normalization → input shape (4, 3000)
+No amplitude-based rejection; reject_by_annotation=False in the source.
+
+PROVENANCE NOTES
+EEG Preprocessing
+Run: HMC-PPT-20261007-01
+Sources: preprocessing_config.json, eeg_example_metadata.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 6
+
+Sleep Stage Distribution
+Source: HMC-PPT-20261007-01 | stage_distribution.csv, class_weights.csv
+06
+Class weighting: Ntraining / (5 × training class count); computed from training labels only.
+
+PROVENANCE NOTES
+Sleep Stage Distribution
+Run: HMC-PPT-20261007-01
+Sources: stage_distribution.csv, class_weights.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 7
+
+Fast SCFormer-U Architecture
+Source: HMC-PPT-20261007-01 | checkpoint_config.json, model_layers.csv
+07
+EEG epoch
+4 × 3000
+Conv1D 64
+k7, stride4
+750 × 64
+Conv1D 128
+k5, stride4
+188 × 128
+Self-attention
+4 heads, key16
+188 × 128
+Softplus 5
+evidence
+α = e + 1
+Average pool
+Dense 128
+Dropout .2/.1
+BiLSTM 64×2
+188 × 128
+Residual + LN
+FFN 128→128
+GELU
+Hybrid CNN–Transformer/self-attention–BiLSTM | 225,925 trainable parameters
+
+PROVENANCE NOTES
+Fast SCFormer-U Architecture
+Run: HMC-PPT-20261007-01
+Sources: checkpoint_config.json, model_layers.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 8
+
+Role of Each Model Component
+Source: HMC-PPT-20261007-01 | checkpoint_config.json, model_layers.csv
+08
+CNN downsampling
+Convolutional filters learn local patterns; strides reduce 3000 samples to 188 feature positions.
+Self-attention + feed-forward block
+Four attention heads combine feature positions within each individual 30-second epoch.
+Bidirectional LSTM
+64 units in each direction model the downsampled within-epoch sequence.
+Evidential output
+Five nonnegative evidence values define Dirichlet means and total-evidence uncertainty.
+
+PROVENANCE NOTES
+Role of Each Model Component
+Run: HMC-PPT-20261007-01
+Sources: checkpoint_config.json, model_layers.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 9
+
+Uncertainty-Aware Classification
+Source: HMC-PPT-20261007-01 | calibration_metrics.json, test_uncertainty.csv
+09
+Actual output
+αk = evidencek + 1
+pk = αk / Σα
+u = 5 / Σα
+
+Error-detection AUROC
+0.580
+Higher uncertainty is useful only if it separates errors; this is evaluated, not assumed.
+
+PROVENANCE NOTES
+Uncertainty-Aware Classification
+Run: HMC-PPT-20261007-01
+Sources: calibration_metrics.json, test_uncertainty.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 10
+
+Model Training Progress
+Source: HMC-PPT-20261007-01 | training_history.csv, hyperparameters.json
+10
+Setting | Verified value | Setting | Verified value
+Optimizer | Adam | Learning rate | 1 × 10⁻⁴
+Batch size | 128 | Epochs | 10; selected 9
+Early stopping | Patience 5; not triggered | Training hardware | Not preserved in run log
+
+PROVENANCE NOTES
+Model Training Progress
+Run: HMC-PPT-20261007-01
+Sources: training_history.csv, hyperparameters.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 11
+
+Sleep-Stage Classification Performance
+Source: HMC-PPT-20261007-01 | overall_metrics.json, test_epoch_predictions.csv
+11
+Accuracy
+53.75%
+Balanced accuracy
+57.83%
+Macro F1
+55.12%
+Weighted F1
+54.92%
+Cohen’s kappa
+0.4060
+Raw evidential model
+3,773 epochs · four held-out test IDs
+Final checkpoint, corrected test inputs, one run. Subject-disjoint fit; no external validation.
+
+PROVENANCE NOTES
+Sleep-Stage Classification Performance
+Run: HMC-PPT-20261007-01
+Sources: overall_metrics.json, test_epoch_predictions.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 12
+
+Sleep Stage Confusion Matrix
+Source: HMC-PPT-20261007-01 | confusion_matrix_normalized.csv, classification_report.csv
+12
+• Highest recall: Wake (66.36%).
+• Lowest recall: N2 (44.00%).
+• Largest off-diagonal share: N3 → N2 (35.33%).
+
+PROVENANCE NOTES
+Sleep Stage Confusion Matrix
+Run: HMC-PPT-20261007-01
+Sources: confusion_matrix_normalized.csv, classification_report.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 13
+
+Class-Wise Classification Performance
+Source: HMC-PPT-20261007-01 | classification_report.csv
+13
+Stage | Precision | Recall
+Wake | 0.643 | 0.664
+N1 | 0.269 | 0.571
+N2 | 0.685 | 0.440
+N3 | 0.644 | 0.640
+REM | 0.543 | 0.577
+Lowest class F1: N1; all values come from the raw-model condition.
+
+PROVENANCE NOTES
+Class-Wise Classification Performance
+Run: HMC-PPT-20261007-01
+Sources: classification_report.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 14
+
+Uncertainty and Calibration
+Source: HMC-PPT-20261007-01 | calibration_metrics.json, calibration_bins.csv
+14
+ECE (10 bins): 0.0705  |  Brier (multiclass sum): 0.5879
+NLL: 1.1012  |  Error AUROC: 0.5798
+
+PROVENANCE NOTES
+Uncertainty and Calibration
+Run: HMC-PPT-20261007-01
+Sources: calibration_metrics.json, calibration_bins.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 15
+
+Soft-Viterbi Sleep Stage Refinement
+Source: HMC-PPT-20261007-01 | soft_viterbi_pseudocode.txt, transition_config.json
+15
+• The model scores each 30-second epoch independently.
+• The decoder balances those stage probabilities with transitions estimated from training labels.
+• A log-space dynamic program selects one sequence for each recording; it never joins subjects.
+Dirichlet mean
+probabilities
+Training-label
+transition matrix
+Weighted MAP
+Viterbi decoder
+Decoded
+hypnogram
+Smoothing may improve aggregate scores while erasing brief stages. All transitions remain possible.
+
+PROVENANCE NOTES
+Soft-Viterbi Sleep Stage Refinement
+Run: HMC-PPT-20261007-01
+Sources: soft_viterbi_pseudocode.txt, transition_config.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 16
+
+Sleep Stage Transition Modeling
+Source: HMC-PPT-20261007-01 | transition_matrix.csv, transition_config.json
+16
+Training labels only
+
+Pseudocount: 1 per cell
+Rows sum to one
+Initialization: stage prevalence
+Separate recording boundaries
+Emission log-weight: 0.9
+
+PROVENANCE NOTES
+Sleep Stage Transition Modeling
+Run: HMC-PPT-20261007-01
+Sources: transition_matrix.csv, transition_config.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 17
+
+Raw vs Smoothed Sequence — SN009
+Source: HMC-PPT-20261007-01 | test_epoch_predictions.csv
+17
+
+PROVENANCE NOTES
+Raw vs Smoothed Sequence — SN009
+Run: HMC-PPT-20261007-01
+Sources: test_epoch_predictions.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 18
+
+Impact of Sequence Smoothing
+Source: HMC-PPT-20261007-01 | raw_vs_smoothed_metrics.csv, smoothing_delta.json
+18
+Metric | Raw model | Soft-Viterbi | Absolute change
+Accuracy | 53.75% | 61.99% | +8.24 pp
+Balanced accuracy | 57.83% | 64.26% | +6.43 pp
+Macro F1 | 55.12% | 61.76% | +6.64 pp
+Weighted F1 | 54.92% | 61.93% | +7.01 pp
+Cohen’s kappa | 0.4060 | 0.4999 | +0.0939
+Improved: Accuracy, Balanced accuracy, Macro F1, Weighted F1, Cohen’s kappa.
+All listed aggregate metrics improved; per-subject outcomes may differ.
+
+PROVENANCE NOTES
+Impact of Sequence Smoothing
+Run: HMC-PPT-20261007-01
+Sources: raw_vs_smoothed_metrics.csv, smoothing_delta.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 19
+
+Personalized Sleep Health Indicators
+Source: HMC-PPT-20261007-01 | biomarker_equations.md, subject_biomarkers.csv
+19
+Evaluated-recording SE (%)
+100 × non-Wake epochs / all evaluated epochs; a recording-duration proxy.
+WASO (minutes)
+Wake epochs between first and last sleep epoch × 0.5; excludes trailing Wake.
+N3 proportion (%)
+100 × N3 epochs / all evaluated epochs, including Wake in the denominator.
+SFI (transitions / sleep hour)
+N2/N3/REM → Wake/N1 transitions divided by hours scored as sleep; coarse stage-transition proxy.
+No verified time-in-bed denominator; these indicators are research measures, not diagnoses.
+
+PROVENANCE NOTES
+Personalized Sleep Health Indicators
+Run: HMC-PPT-20261007-01
+Sources: biomarker_equations.md, subject_biomarkers.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 20
+
+Rule-Based Sleep Health Risk Stratification
+Source: HMC-PPT-20261007-01 | risk_rules.json, risk_rules_table.csv
+20
+Flags: SE <75% · WASO >60 min · N3 <10% · SFI >10 transitions/sleep hour
+Priority | Research category | Exact assignment rule
+1 | High Risk | ≥3 flags OR SE <65% OR SFI >15/h
+2 | Mild Risk | Otherwise, at least one flag
+3 | Healthy | Otherwise, no flags
+Missing/nonfinite input → Unclassified in the new evaluator.
+Thresholds are source-code rules; no clinical validation is established.
+
+PROVENANCE NOTES
+Rule-Based Sleep Health Risk Stratification
+Run: HMC-PPT-20261007-01
+Sources: risk_rules.json, risk_rules_table.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 21
+
+Test Subject Sleep Health Profiles
+Source: HMC-PPT-20261007-01 | subject_risk_profiles.csv, biomarker_validation.csv
+21
+Recording | SE proxy | WASO (min) | N3 / all | SFI (/h) | Risk
+SN009 | 90.01% | 14.0 | 23.97% | 1.18 | Healthy
+SN001 | 91.45% | 31.5 | 24.71% | 1.84 | Healthy
+SN004 | 88.48% | 34.5 | 7.19% | 2.27 | Mild Risk
+SN022 | 84.03% | 74.0 | 9.08% | 2.00 | Mild Risk
+Source: Soft-Viterbi labels only. Ground-truth profiles are stored separately.
+Research category agreement with ground truth: 2/4 recordings.
+SFI is a stage-transition proxy. Time in bed was not directly verified.
+
+PROVENANCE NOTES
+Test Subject Sleep Health Profiles
+Run: HMC-PPT-20261007-01
+Sources: subject_risk_profiles.csv, biomarker_validation.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 22
+
+Complete End-to-End Framework
+Source: HMC-PPT-20261007-01 | evaluate_authoritative_run.py, final_results.json
+22
+Four-channel
+EDF EEG
+Verified
+preprocessing
+30-second
+epochs
+Fast SCFormer-U
+hybrid model
+Research profile
++ ground-truth check
+SE / WASO
+N3 / SFI
+Decoded
+hypnogram
+Probabilities
++ uncertainty
+Second row is read right to left: probabilities → per-recording Viterbi → biomarkers → research rules.
+
+PROVENANCE NOTES
+Complete End-to-End Framework
+Run: HMC-PPT-20261007-01
+Sources: evaluate_authoritative_run.py, final_results.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 23
+
+Project Progress — Verified Deliverables
+Source: HMC-PPT-20261007-01 | final_results.json, input_repairs.json
+23
+Completed and checked
+Saved checkpoint loaded; disjoint split audited; corrupted SN001 test input reconstructed; inference rerun on all four test recordings.
+Completed and checked
+Confusion matrices, class reports, uncertainty/calibration, transition decoding, real EEG plots and all four hypnograms generated from one run.
+Research limits remain
+External validation, clinical threshold review and independent diagnostic validation have not been performed.
+
+PROVENANCE NOTES
+Project Progress — Verified Deliverables
+Run: HMC-PPT-20261007-01
+Sources: final_results.json, input_repairs.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 24
+
+Current Research Limitations
+Source: HMC-PPT-20261007-01 | final_results.json, calibration_metrics.json
+24
+• Limited cohort: 24 SN recording IDs; only four final test recordings (3,773 epochs).
+• EEG-only inputs; no multimodal PSG or cross-dataset validation.
+• Historical notebook test reuse limits claims of a newly blinded evaluation.
+• Evidential uncertainty and reliability require stronger independent validation.
+• Research biomarker definitions and thresholds are not clinically validated.
+• Training hardware and final global training RNG state were not preserved.
+
+PROVENANCE NOTES
+Current Research Limitations
+Run: HMC-PPT-20261007-01
+Sources: final_results.json, calibration_metrics.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 25
+
+Future Work
+Source: HMC-PPT-20261007-01 | verified scope and limitations
+25
+External validation
+Evaluate on independent HMC recordings and another sleep dataset.
+Multimodal PSG
+Test EEG + EOG + EMG with a preregistered protocol.
+Generalization
+Study montage, device and population changes.
+Calibration
+Fit any calibrator on validation data, then test once.
+Clinical review
+Review biomarker denominators and research thresholds with experts.
+Prospective validation
+Assess blinded recording-level outcomes before clinical claims.
+
+PROVENANCE NOTES
+Future Work
+Run: HMC-PPT-20261007-01
+Sources: verified scope and limitations
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 26
+
+Verified Example System Output
+Source: HMC-PPT-20261007-01 | eeg_example_metadata.json, subject_risk_profiles.csv
+26
+Test recording SN009
+SE proxy: 90.01%
+WASO: 14.0 min
+N3 / all epochs: 23.97%
+SFI: 1.18 /sleep h
+Research category: Healthy
+Outputs: hypnogram, epoch probabilities, uncertainty and ground-truth validation.
+
+PROVENANCE NOTES
+Verified Example System Output
+Run: HMC-PPT-20261007-01
+Sources: eeg_example_metadata.json, subject_risk_profiles.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 27
+
+Conclusion
+Source: HMC-PPT-20261007-01 | final_results.json, overall_metrics.json
+27
+• A compact hybrid CNN–self-attention–BiLSTM pipeline supports five-stage EEG scoring and evidential uncertainty.
+• On 3,773 epochs from four test recordings, raw accuracy was 53.75%; Soft-Viterbi accuracy was 61.99%.
+• All final results use one checkpoint and the same verified test epochs; SN001’s shortened input was corrected.
+• Research sleep profiles are reproducible, but clinical validity and external generalization remain unestablished.
+EEG → stage probabilities + uncertainty → decoded hypnogram → research sleep profile
+
+PROVENANCE NOTES
+Conclusion
+Run: HMC-PPT-20261007-01
+Sources: final_results.json, overall_metrics.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 28
+
+Thank You
+Questions & Discussion
+Rikin Parekh · Om Ahuja
+23BIT044 · 23BIT014
+Project Guide: Dr. Santosh Sathpathy
+
+PROVENANCE NOTES
+Names and guide retained from original deck and user metadata. HMC-PPT-20261007-01
+
+SLIDE 29
+
+Appendix
+Source: HMC-PPT-20261007-01 | verified artifact package
+29
+Technical details and reproducible evidence
+Checkpoint architecture · classification · uncertainty · sequence decoding
+Training settings · source equations · additional real hypnograms · literature
+
+PROVENANCE NOTES
+Appendix
+Run: HMC-PPT-20261007-01
+Sources: verified artifact package
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 30
+
+Appendix — Model Summary
+Source: HMC-PPT-20261007-01 | model_layers.csv, model_summary.txt
+30
+Component | Output / setting | Parameters
+Input + permute | 4 × 3000 → 3000 × 4 | 0
+Conv1D 64 + BN + ReLU | 750 × 64 | 2,112
+Conv1D 128 + BN + ReLU | 188 × 128 | 41,600
+Multi-head attention | 188 × 128; 4 heads × key16 | 33,088
+Residual/LN + FFN + residual/LN | 188 × 128; GELU 128→128 | 33,536
+Bidirectional LSTM | 188 × 128; 64 per direction | 98,816
+Global average pool + dropout | 128; dropout .2 | 0
+Dense + dropout | 128; ReLU; dropout .1 | 16,512
+Evidential dense | 5; softplus | 645
+Total 226,309; trainable 225,925; non-trainable 384. Full layer export in model_layers.csv.
+
+PROVENANCE NOTES
+Appendix — Model Summary
+Run: HMC-PPT-20261007-01
+Sources: model_layers.csv, model_summary.txt
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 31
+
+Appendix — Classification Report
+Source: HMC-PPT-20261007-01 | classification_report.csv
+31
+Stage / average | Precision | Recall | F1 | Support
+Wake | 0.643 | 0.664 | 0.653 | 437
+N1 | 0.269 | 0.571 | 0.366 | 471
+N2 | 0.685 | 0.440 | 0.536 | 1,618
+N3 | 0.644 | 0.640 | 0.642 | 600
+REM | 0.543 | 0.577 | 0.559 | 647
+macro avg | 0.557 | 0.578 | 0.551 | 3,773
+weighted avg | 0.597 | 0.538 | 0.549 | 3,773
+Raw model; support total 3,773. Macro averages weight stages equally; weighted averages use support.
+
+PROVENANCE NOTES
+Appendix — Classification Report
+Run: HMC-PPT-20261007-01
+Sources: classification_report.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 32
+
+Appendix — Raw Confusion Counts
+Source: HMC-PPT-20261007-01 | confusion_matrix_counts.csv
+32
+
+PROVENANCE NOTES
+Appendix — Raw Confusion Counts
+Run: HMC-PPT-20261007-01
+Sources: confusion_matrix_counts.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 33
+
+Appendix — Soft-Viterbi Confusion Matrix
+Source: HMC-PPT-20261007-01 | smoothed_confusion_matrix_normalized.csv
+33
+
+PROVENANCE NOTES
+Appendix — Soft-Viterbi Confusion Matrix
+Run: HMC-PPT-20261007-01
+Sources: smoothed_confusion_matrix_normalized.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+Renamed unsupported self-calibrated appendix condition: no such checkpoint exists in the final project model directory.
+
+SLIDE 34
+
+Appendix — Risk–Coverage Curve
+Source: HMC-PPT-20261007-01 | risk_coverage_data.csv, calibration_metrics.json
+34
+
+PROVENANCE NOTES
+Appendix — Risk–Coverage Curve
+Run: HMC-PPT-20261007-01
+Sources: risk_coverage_data.csv, calibration_metrics.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 35
+
+Appendix — Reliability and Calibration
+Source: HMC-PPT-20261007-01 | calibration_bins.csv, calibration_metrics.json
+35
+Raw probabilities
+
+10 equal-width bins
+ECE: 0.0705
+Brier: 0.5879
+NLL: 1.1012
+
+Bin counts shown below the curve.
+
+PROVENANCE NOTES
+Appendix — Reliability and Calibration
+Run: HMC-PPT-20261007-01
+Sources: calibration_bins.csv, calibration_metrics.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 36
+
+Appendix — Training Class Weights
+Source: HMC-PPT-20261007-01 | class_weights.csv
+36
+Stage | Training epochs | Balanced weight
+Wake | 3,202 | 0.950406
+N1 | 1,553 | 1.959562
+N2 | 5,254 | 0.579216
+N3 | 2,926 | 1.040055
+REM | 2,281 | 1.334152
+wk = Ntraining / (5 × Nk)
+Balanced weights use training labels only; passed to model.fit(class_weight=...).
+
+PROVENANCE NOTES
+Appendix — Training Class Weights
+Run: HMC-PPT-20261007-01
+Sources: class_weights.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 37
+
+Appendix — Final Hyperparameters
+Source: HMC-PPT-20261007-01 | hyperparameters.json, checkpoint_config.json
+37
+Setting | Verified configuration
+Optimizer / learning rate | Adam / 1 × 10⁻⁴
+Batch / epoch limit / completed | 128 / 10 / 10
+Checkpoint selection | Maximum validation evidential accuracy; epoch 9
+Early stopping / scheduler | Patience 5, restore best; not triggered / no scheduler
+Dropout / evidence penalty | 0.2 and 0.1 / coefficient 0.003
+Label smoothing / class weighting | 0.05 / balanced training-label weights
+Seed provenance | Split seed 42; final training RNG state not recoverable
+Hardware / versions | Training hardware not recorded; checkpoint Keras 3.13.2
+
+PROVENANCE NOTES
+Appendix — Final Hyperparameters
+Run: HMC-PPT-20261007-01
+Sources: hyperparameters.json, checkpoint_config.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 38
+
+Appendix — Implemented Biomarker Equations
+Source: HMC-PPT-20261007-01 | biomarker_equations.md
+38
+Measure | Exact source equation
+SE proxy (%) | 100 × nsleep / N
+WASO (min) | 0.5 × Wake count between first and last sleep
+N3 / all (%) | 100 × nN3 / N
+SFI (/sleep h) | Count({N2,N3,REM} → {Wake,N1}) / (nsleep / 120)
+N: evaluated 30-second epochs; nsleep: non-Wake epochs; nN3: N3 epochs.
+WASO excludes trailing Wake; no-sleep WASO/SFI return 0 in source.
+No verified time-in-bed denominator. SFI is a stage-transition proxy, not micro-arousal scoring.
+
+PROVENANCE NOTES
+Appendix — Implemented Biomarker Equations
+Run: HMC-PPT-20261007-01
+Sources: biomarker_equations.md
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 39
+
+Appendix — Weighted Viterbi Details
+Source: HMC-PPT-20261007-01 | soft_viterbi_pseudocode.txt, transition_config.json
+39
+Aij = (1 + training transitions i→j) / row sum
+πj = (1 + training countj) / (5 + Ntraining)
+ptj = (etj + 1) / Σk(etk + 1)
+D0j = log(πj + ε) + 0.9 log(p0j + ε)
+Dtj = maxi[Dt−1,i + log(Aij + ε)] + 0.9 log(ptj + ε)
+Store argmax predecessors; backtrack from argmaxj DT−1,j.
+ε = 10⁻¹²; training-only transitions; class order Wake/N1/N2/N3/REM.
+Restart at each recording or missing-epoch gap. This is weighted MAP Viterbi, not differentiable soft-DP.
+
+PROVENANCE NOTES
+Appendix — Weighted Viterbi Details
+Run: HMC-PPT-20261007-01
+Sources: soft_viterbi_pseudocode.txt, transition_config.json
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 40
+
+Appendix — Additional Test Hypnograms
+Source: HMC-PPT-20261007-01 | test_epoch_predictions.csv
+40
+
+PROVENANCE NOTES
+Appendix — Additional Test Hypnograms
+Run: HMC-PPT-20261007-01
+Sources: test_epoch_predictions.csv
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.
+
+SLIDE 41
+
+Appendix — Related Literature
+Source: HMC-PPT-20261007-01 | literature_comparison.csv, references.txt
+41
+Study | Dataset | Modality | Protocol | Accuracy / macro F1
+SeqSleepNet [1]
+2019 | MASS; 200 | EEG+EOG+EMG | 20-fold subject CV | 87.10% / 83.30%
+DeepSleepNet [2]
+2017 | Sleep-EDF; 20 | EEG Fpz–Cz | 20-fold subject CV | 82.00% / 76.90%
+Current raw model
+2026 | HMC subset; 24 | Four-channel EEG | Fixed 16/4/4 split | 53.75% / 55.12%
+Context only: different datasets, modalities and split protocols prevent direct ranking.
+[1] DOI: 10.1109/TNSRE.2019.2896659
+[2] DOI: 10.1109/TNSRE.2017.2721116
+HMC dataset: DOI 10.13026/t79q-fr32. Full sources and protocols in references.txt.
+
+PROVENANCE NOTES
+Appendix — Related Literature
+Run: HMC-PPT-20261007-01
+Sources: literature_comparison.csv, references.txt
+Test recordings: SN009, SN001, SN004, SN022.
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+All classification results use identical corrected test epochs.
+Only four test recordings; no external validation.
+Final training hardware and global training RNG state not preserved.
+Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.
+Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.
+Rule thresholds have no clinical validation in this project.
+Evidential probabilities are not a separately fitted self-calibrated condition.
+SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.

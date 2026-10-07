@@ -1,0 +1,13 @@
+{
+  "subject_id": "SN009",
+  "channel": "EEG F4-M1",
+  "epoch_index": 10,
+  "start_seconds": 300.0,
+  "end_seconds": 330.0,
+  "raw_sampling_hz": 256,
+  "processed_sampling_hz": 100,
+  "reprocessed_vs_saved_max_abs_difference": 0.0,
+  "same_source_and_interval": true,
+  "raw_unit": "volts",
+  "processed_unit": "normalized amplitude"
+}

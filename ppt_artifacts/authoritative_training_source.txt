@@ -1,0 +1,512 @@
+CELL 201 (zero-based)
+import os
+import gc
+import numpy as np
+import mne
+from tqdm import tqdm
+
+mne.set_log_level("ERROR")
+
+# Configure Paths
+BASE_SEARCH_DIR = "/content/drive/MyDrive/Sleep_Health_Profiling"
+SAVE_DIR = "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed"
+os.makedirs(SAVE_DIR, exist_ok=True)
+
+# Signal Configuration
+EEG_CHANNELS = ['EEG F4-M1', 'EEG C4-M1', 'EEG O2-M1', 'EEG C3-M2']
+TARGET_SFREQ = 100
+LOW_FREQ = 0.3
+HIGH_FREQ = 35
+NOTCH = 50
+
+EVENT_ID = {
+    "Sleep stage W": 0,
+    "Sleep stage N1": 1,
+    "Sleep stage N2": 2,
+    "Sleep stage N3": 3,
+    "Sleep stage R": 4
+}
+
+# Recursively crawl for all signal and scoring files in Sleep_Health_Profiling folder
+signal_paths = {}
+scoring_paths = {}
+
+for root, dirs, files in os.walk(BASE_SEARCH_DIR):
+    for file in files:
+        if file.endswith(".edf"):
+            full_path = os.path.join(root, file)
+            if "_sleepscoring" in file:
+                subj_id = file.replace("_sleepscoring.edf", "")
+                scoring_paths[subj_id] = full_path
+            else:
+                subj_id = file.replace(".edf", "")
+                signal_paths[subj_id] = full_path
+
+# Match them together
+pairs = []
+for subj_id, sig_path in signal_paths.items():
+    if subj_id in scoring_paths:
+        pairs.append((subj_id, sig_path, scoring_paths[subj_id]))
+
+pairs = sorted(pairs, key=lambda x: x[0])
+print(f"Found {len(pairs)} matched signal-scoring pairs recursively under {BASE_SEARCH_DIR}.")
+
+def preprocess_subject(signal_path, scoring_path, save_path):
+    raw = mne.io.read_raw_edf(signal_path, preload=True, verbose=False)
+    annot = mne.read_annotations(scoring_path)
+    raw.set_annotations(annot)
+
+    available = [c for c in EEG_CHANNELS if c in raw.ch_names]
+    if len(available) != 4:
+        raise ValueError(f"Missing channels. Expected 4, found: {available}")
+
+    raw.pick(available)
+    raw.notch_filter(NOTCH, verbose=False)
+    raw.filter(LOW_FREQ, HIGH_FREQ, verbose=False)
+    raw.resample(TARGET_SFREQ, verbose=False)
+
+    sfreq = raw.info["sfreq"]
+    events, _ = mne.events_from_annotations(raw, event_id=EVENT_ID, verbose=False)
+
+    if len(events) == 0:
+        raise ValueError("No sleep stage events found.")
+
+    epochs = mne.Epochs(
+        raw,
+        events,
+        event_id=EVENT_ID,
+        tmin=0,
+        tmax=30 - 1/sfreq,
+        baseline=None,
+        preload=True,
+        reject_by_annotation=False,
+        verbose=False
+    )
+
+    X = epochs.get_data().astype(np.float32)   # Shape: (epochs, 4, 3000)
+    Y = epochs.events[:, -1].astype(np.int64)  # Shape: (epochs,)
+
+    # Normalize epochs channel-wise
+    mean = X.mean(axis=2, keepdims=True)
+    std = X.std(axis=2, keepdims=True) + 1e-6
+    X = (X - mean) / std
+
+    np.savez_compressed(save_path, X=X, Y=Y)
+    del raw, annot, epochs, X, Y
+    gc.collect()
+
+# Run preprocessing
+processed_count = 0
+failed_subjects = []
+
+for subj_id, sig_path, score_path in tqdm(pairs, desc="Preprocessing HMC"):
+    dest_path = os.path.join(SAVE_DIR, f"{subj_id}.npz")
+
+    if os.path.exists(dest_path):
+        processed_count += 1
+        continue
+
+    try:
+        preprocess_subject(sig_path, score_path, dest_path)
+        processed_count += 1
+    except Exception as e:
+        failed_subjects.append((subj_id, str(e)))
+
+print(f"Preprocessing finished. Success: {processed_count}, Failed: {len(failed_subjects)}")
+if failed_subjects:
+    print("Failures:", failed_subjects)
+CELL 203 (zero-based)
+import os
+import json
+import random
+
+PREPROC_PATH = "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed"
+
+# Perform a fresh directory search to locate the newly generated .npz subject files
+npz_files = sorted([f for f in os.listdir(PREPROC_PATH) if f.endswith(".npz")])
+subjects = [f.replace(".npz", "") for f in npz_files]
+
+random.seed(42)
+random.shuffle(subjects)
+
+train_ratio, val_ratio, test_ratio = 0.70, 0.15, 0.15
+n = len(subjects)
+
+if n == 0:
+    print(f"WARNING: No preprocessed .npz files found in {PREPROC_PATH}. Please make sure Step 1 (cell 72f5873b) has run and finished successfully.")
+else:
+    train_end = int(n * train_ratio)
+    val_end = int(n * (train_ratio + val_ratio))
+
+    split_info = {
+        "train_subjects": subjects[:train_end],
+        "val_subjects": subjects[train_end:val_end],
+        "test_subjects": subjects[val_end:]
+    }
+
+    split_path = os.path.join(PREPROC_PATH, "subject_split.json")
+    with open(split_path, "w") as f:
+        json.dump(split_info, f, indent=4)
+
+    print(f"Split successfully created and saved to {split_path}!")
+    print(f"Train: {len(split_info['train_subjects'])}, Val: {len(split_info['val_subjects'])}, Test: {len(split_info['test_subjects'])}")
+CELL 205 (zero-based)
+import os
+import json
+import numpy as np
+import tensorflow as tf
+from sklearn.utils.class_weight import compute_class_weight
+from tqdm import tqdm
+
+# Configure training paths
+PREPROC_PATH = "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed"
+SPLIT_JSON = os.path.join(PREPROC_PATH, "subject_split.json")
+CKPT_PATH = "/content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS"
+os.makedirs(CKPT_PATH, exist_ok=True)
+
+BEST_MODEL_PATH = os.path.join(CKPT_PATH, "best_objective1_model.keras")
+CSV_LOG_PATH = os.path.join(CKPT_PATH, "training_log.csv")
+
+NUM_CLASSES = 5
+BATCH_SIZE = 128
+EPOCHS = 10
+LEARNING_RATE = 1e-4
+
+# 1. Load splits
+with open(SPLIT_JSON, "r") as f:
+    split_info = json.load(f)
+train_subjects = split_info["train_subjects"]
+val_subjects = split_info["val_subjects"]
+test_subjects = split_info["test_subjects"]
+
+# 2. Helper to load and concatenate npz datasets
+def load_data_from_subjects(subject_list):
+    X_list, Y_list = [], []
+    for sid in tqdm(subject_list, desc="Loading Subjects"):
+        fpath = os.path.join(PREPROC_PATH, f"{sid}.npz")
+        if os.path.exists(fpath):
+            data = np.load(fpath, allow_pickle=True)
+            X_list.append(data["X"])
+            Y_list.append(data["Y"])
+    X = np.concatenate(X_list, axis=0).astype(np.float32)
+    Y = np.concatenate(Y_list, axis=0).astype(np.int32)
+    return X, Y
+
+print("Loading preprocessed Train and Val datasets into RAM...")
+X_train, Y_train = load_data_from_subjects(train_subjects)
+X_val, Y_val = load_data_from_subjects(val_subjects)
+
+# 3. Compute Class Weights
+class_weights_arr = compute_class_weight(
+    class_weight="balanced",
+    classes=np.arange(NUM_CLASSES),
+    y=Y_train
+)
+CLASS_WEIGHTS = {i: float(w) for i, w in enumerate(class_weights_arr)}
+print("Computed Class Weights:", CLASS_WEIGHTS)
+print(f"Dataset Loaded successfully! Train Shape: {X_train.shape}, Val Shape: {X_val.shape}")
+CELL 206 (zero-based)
+from tensorflow.keras import layers, models
+
+# 4. Build Fast SCFormer-U Model
+def build_fast_model(input_shape=(4, 3000), num_classes=5):
+    inp = layers.Input(shape=input_shape)
+    x = layers.Permute((2, 1))(inp)  # (3000, 4)
+
+    # Aggressive downsampling
+    x = layers.Conv1D(64, kernel_size=7, strides=4, padding="same")(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.ReLU()(x)
+
+    x = layers.Conv1D(128, kernel_size=5, strides=4, padding="same")(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.ReLU()(x)
+
+    # Single Transformer Block
+    attn = layers.MultiHeadAttention(num_heads=4, key_dim=16)(x, x)
+    x = layers.LayerNormalization()(x + attn)
+    ffn = layers.Dense(128, activation="gelu")(x)
+    ffn = layers.Dense(128)(ffn)
+    x = layers.LayerNormalization()(x + ffn)
+
+    # Temporal Head
+    x = layers.Bidirectional(layers.LSTM(64, return_sequences=True))(x)
+    x = layers.GlobalAveragePooling1D()(x)
+    x = layers.Dropout(0.2)(x)
+
+    x = layers.Dense(128, activation="relu")(x)
+    x = layers.Dropout(0.1)(x)
+    evidence = layers.Dense(num_classes, activation="softplus")(x) # Evidential output
+
+    return models.Model(inp, evidence)
+
+# Custom Evidential Loss
+def evidence_to_probs(evidence):
+    alpha = evidence + 1.0
+    return alpha / tf.reduce_sum(alpha, axis=-1, keepdims=True)
+
+def evidential_loss(y_true, evidence):
+    y_true = tf.cast(y_true, tf.int32)
+    y_onehot = tf.one_hot(y_true, depth=NUM_CLASSES)
+    y_onehot = 0.95 * y_onehot + 0.05 / NUM_CLASSES
+    alpha = evidence + 1.0
+    S = tf.reduce_sum(alpha, axis=-1, keepdims=True)
+    probs = alpha / S
+    ce = -tf.reduce_sum(y_onehot * tf.math.log(probs + 1e-8), axis=-1)
+    reg = tf.reduce_sum((alpha - 1.0) * (1.0 - y_onehot), axis=-1) / NUM_CLASSES
+    return ce + 0.003 * reg
+
+def evidential_accuracy(y_true, evidence):
+    probs = evidence_to_probs(evidence)
+    return tf.keras.metrics.sparse_categorical_accuracy(y_true, probs)
+
+model = build_fast_model()
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
+    loss=evidential_loss,
+    metrics=[evidential_accuracy]
+)
+model.summary()
+CELL 207 (zero-based)
+# 5. Train Model
+callbacks_list = [
+    tf.keras.callbacks.ModelCheckpoint(
+        BEST_MODEL_PATH,
+        monitor="val_evidential_accuracy",
+        mode="max",
+        save_best_only=True,
+        verbose=1
+    ),
+    tf.keras.callbacks.CSVLogger(CSV_LOG_PATH, append=True),
+    tf.keras.callbacks.EarlyStopping(
+        monitor="val_evidential_accuracy",
+        mode="max",
+        patience=5,
+        restore_best_weights=True,
+        verbose=1
+    )
+]
+
+print("Training the Sleep Health Profiler model...")
+history = model.fit(
+    X_train,
+    Y_train,
+    validation_data=(X_val, Y_val),
+    batch_size=BATCH_SIZE,
+    epochs=EPOCHS,
+    class_weight=CLASS_WEIGHTS,
+    callbacks=callbacks_list,
+    verbose=1
+)
+print("Training successfully completed!")
+CELL 211 (zero-based)
+import os
+import json
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score, f1_score, cohen_kappa_score, classification_report
+
+PREPROC_PATH = "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed"
+CKPT_PATH = "/content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS"
+SPLIT_JSON = os.path.join(PREPROC_PATH, "subject_split.json")
+BEST_MODEL_PATH = os.path.join(CKPT_PATH, "best_objective1_model.keras")
+
+NUM_CLASSES = 5
+CLASS_NAMES = ["W", "N1", "N2", "N3", "REM"]
+EPS = 1e-12
+
+# Helper functions
+def evidence_to_probs(evidence):
+    alpha = evidence + 1.0
+    return alpha / tf.reduce_sum(alpha, axis=-1, keepdims=True)
+
+def evidence_to_uncertainty(evidence, num_classes=5):
+    alpha = evidence + 1.0
+    return num_classes / tf.reduce_sum(alpha, axis=-1, keepdims=True)
+
+# Custom evidential objects for model loader
+def evidential_loss(y_true, evidence):
+    return tf.constant(0.0)
+def evidential_accuracy(y_true, evidence):
+    return tf.constant(0.0)
+
+print("Loading the best trained baseline model...")
+best_model = tf.keras.models.load_model(
+    BEST_MODEL_PATH,
+    custom_objects={
+        "evidential_loss": evidential_loss,
+        "evidential_accuracy": evidential_accuracy
+    }
+)
+print("Model loaded successfully!")
+CELL 212 (zero-based)
+# Calculate and visualize the transition matrix from training data
+def build_transition_matrix(subject_list, preproc_path, smoothing=1.0):
+    trans_counts = np.full((NUM_CLASSES, NUM_CLASSES), smoothing, dtype=np.float64)
+    class_counts = np.full(NUM_CLASSES, smoothing, dtype=np.float64)
+
+    for sid in subject_list:
+        path = os.path.join(preproc_path, f"{sid}.npz")
+        if os.path.exists(path):
+            d = np.load(path, allow_pickle=True)
+            Y = d["Y"].astype(np.int32)
+            if len(Y) == 0:
+                continue
+            for y in Y:
+                class_counts[y] += 1
+            for i in range(len(Y) - 1):
+                trans_counts[Y[i], Y[i + 1]] += 1
+
+    init_probs = class_counts / class_counts.sum()
+    trans_probs = trans_counts / trans_counts.sum(axis=1, keepdims=True)
+    return init_probs, trans_probs
+
+with open(SPLIT_JSON, "r") as f:
+    split_info = json.load(f)
+train_subjects = split_info["train_subjects"]
+test_subjects = split_info["test_subjects"]
+
+init_probs, trans_probs = build_transition_matrix(train_subjects, PREPROC_PATH)
+print("Initial State Probabilities:\n", pd.Series(init_probs, index=CLASS_NAMES))
+print("\nTransition Probability Matrix:")
+display(pd.DataFrame(trans_probs, index=CLASS_NAMES, columns=CLASS_NAMES))
+CELL 213 (zero-based)
+def viterbi_decode_soft(emission_probs, init_probs, trans_probs, alpha=1.0):
+    T, C = emission_probs.shape
+    log_init = np.log(init_probs + EPS)
+    log_trans = np.log(trans_probs + EPS)
+    log_emit = np.log(emission_probs + EPS)
+
+    dp = np.zeros((T, C), dtype=np.float64)
+    backptr = np.zeros((T, C), dtype=np.int32)
+    dp[0] = log_init + alpha * log_emit[0]
+
+    for t in range(1, T):
+        for j in range(C):
+            scores = dp[t - 1] + log_trans[:, j]
+            backptr[t, j] = np.argmax(scores)
+            dp[t, j] = np.max(scores) + alpha * log_emit[t, j]
+
+    best_path = np.zeros(T, dtype=np.int32)
+    best_path[-1] = np.argmax(dp[-1])
+    for t in range(T - 2, -1, -1):
+        best_path[t] = backptr[t + 1, best_path[t + 1]]
+    return best_path
+
+# Evaluate on all test subjects with soft-Viterbi sequence decoding
+y_true_all, y_pred_raw, y_pred_viterbi = [], [], []
+
+for sid in test_subjects:
+    path = os.path.join(PREPROC_PATH, f"{sid}.npz")
+    if not os.path.exists(path):
+        continue
+    d = np.load(path, allow_pickle=True)
+    X = d["X"].astype(np.float32)
+    Y = d["Y"].astype(np.int32)
+
+    # Predict
+    preds = best_model.predict(X, batch_size=128, verbose=0)
+    probs = evidence_to_probs(preds).numpy()
+    raw_preds = np.argmax(probs, axis=1)
+
+    # Decode with transition priors (alpha tuned at 1.0 for standard or 0.8 to prioritize transitions)
+    smoothed_preds = viterbi_decode_soft(probs, init_probs, trans_probs, alpha=0.9)
+
+    y_true_all.extend(Y.tolist())
+    y_pred_raw.extend(raw_preds.tolist())
+    y_pred_viterbi.extend(smoothed_preds.tolist())
+
+y_true_all = np.array(y_true_all)
+y_pred_raw = np.array(y_pred_raw)
+y_pred_viterbi = np.array(y_pred_viterbi)
+
+print("=== Raw Predict Simple Metrics ===")
+print(f"Accuracy: {accuracy_score(y_true_all, y_pred_raw):.4f}")
+print(f"Macro F1: {f1_score(y_true_all, y_pred_raw, average='macro'):.4f}")
+
+print("\n=== Transition-Aware Viterbi Simple Metrics ===")
+print(f"Accuracy: {accuracy_score(y_true_all, y_pred_viterbi):.4f}")
+print(f"Macro F1: {f1_score(y_true_all, y_pred_viterbi, average='macro'):.4f}")
+CELL 215 (zero-based)
+def calculate_sleep_biomarkers(stages, epoch_len_sec=30):
+    """
+    Stages: list of integers (0: W, 1: N1, 2: N2, 3: N3, 4: REM)
+    """
+    total_epochs = len(stages)
+    if total_epochs == 0:
+        return {}
+
+    stages = np.array(stages)
+    total_sleep_time_min = np.sum(stages != 0) * (epoch_len_sec / 60.0)
+    total_recording_time_min = total_epochs * (epoch_len_sec / 60.0)
+
+    # 1. Sleep Efficiency (SE %)
+    sleep_efficiency = (total_sleep_time_min / total_recording_time_min) * 100.0
+
+    # 2. Wake After Sleep Onset (WASO)
+    sleep_indices = np.where(stages != 0)[0]
+    if len(sleep_indices) > 0:
+        first_sleep_idx = sleep_indices[0]
+        last_sleep_idx = sleep_indices[-1]
+        waso_epochs = np.sum(stages[first_sleep_idx:last_sleep_idx+1] == 0)
+        waso_min = waso_epochs * (epoch_len_sec / 60.0)
+    else:
+        waso_min = 0.0
+
+    # 3. Sleep Architecture (Percentages of individual stages)
+    w_pct = (np.sum(stages == 0) / total_epochs) * 100.0
+    n1_pct = (np.sum(stages == 1) / total_epochs) * 100.0
+    n2_pct = (np.sum(stages == 2) / total_epochs) * 100.0
+    n3_pct = (np.sum(stages == 3) / total_epochs) * 100.0
+    rem_pct = (np.sum(stages == 4) / total_epochs) * 100.0
+
+    # 4. Sleep Fragmentation Index (SFI)
+    # Number of transitions from sleep stage to wake/N1 stage, normalized per hour of sleep
+    transitions = 0
+    for i in range(len(stages) - 1):
+        # transition from non-W to W or N1 (micro-arousals / awakenings)
+        if stages[i] != 0 and stages[i] in [2, 3, 4] and stages[i+1] in [0, 1]:
+            transitions += 1
+
+    hours_of_sleep = total_sleep_time_min / 60.0
+    sfi = (transitions / hours_of_sleep) if hours_of_sleep > 0 else 0.0
+
+    return {
+        "Sleep_Efficiency_Pct": sleep_efficiency,
+        "WASO_Minutes": waso_min,
+        "N1_Pct": n1_pct,
+        "N2_Pct": n2_pct,
+        "N3_Deep_Pct": n3_pct,
+        "REM_Pct": rem_pct,
+        "SFI": sfi
+    }
+
+def stratify_risk(metrics):
+    """
+    Rule-based clinical sleep risk stratification
+    """
+    se = metrics["Sleep_Efficiency_Pct"]
+    waso = metrics["WASO_Minutes"]
+    n3 = metrics["N3_Deep_Pct"]
+    sfi = metrics["SFI"]
+
+    reasons = []
+    if se < 75.0:
+        reasons.append("Low Sleep Efficiency")
+    if waso > 60.0:
+        reasons.append("High Wake-After-Sleep-Onset (WASO)")
+    if n3 < 10.0:
+        reasons.append("Lack of N3 Deep Sleep")
+    if sfi > 10.0:
+        reasons.append("High Sleep Fragmentation")
+
+    if len(reasons) >= 3 or se < 65.0 or sfi > 15.0:
+        risk = "High Risk"
+    elif len(reasons) >= 1:
+        risk = "Mild Risk"
+    else:
+        risk = "Healthy"
+
+    return risk, ", ".join(reasons) if reasons else "Optimal Sleep Parameters"

@@ -1,0 +1,55 @@
+{
+  "subjects": 24,
+  "recordings": 24,
+  "leakage_free": true,
+  "split_subject_ids": {
+    "train": [
+      "SN017",
+      "SN006",
+      "SN020",
+      "SN025",
+      "SN015",
+      "SN011",
+      "SN019",
+      "SN012",
+      "SN016",
+      "SN018",
+      "SN002",
+      "SN013",
+      "SN023",
+      "SN007",
+      "SN010",
+      "SN003"
+    ],
+    "val": [
+      "SN024",
+      "SN005",
+      "SN021",
+      "SN008"
+    ],
+    "test": [
+      "SN009",
+      "SN001",
+      "SN004",
+      "SN022"
+    ]
+  },
+  "splits": {
+    "train": {
+      "subjects": 16,
+      "epochs": 15216
+    },
+    "val": {
+      "subjects": 4,
+      "epochs": 3619
+    },
+    "test": {
+      "subjects": 4,
+      "epochs": 3773
+    }
+  },
+  "total_usable_epochs": 22608,
+  "subject_identity_basis": "Repository treats SN recording identifiers as subject identifiers; no separate person mapping supplied.",
+  "recording_id_disjoint": true,
+  "independent_person_identity_mapping_available": false
+}

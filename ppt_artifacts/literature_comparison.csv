@@ -1,0 +1,4 @@
+study,year,dataset,modality,protocol,accuracy,macro_f1,kappa,doi,source,comparison_note
+SeqSleepNet-30 (Phan et al.),2019,"MASS, 200 subjects",EEG C4-A1 + EOG + EMG,20-fold subject CV; 180/10/10 train/validation/test per fold,0.871,0.833,0.815,10.1109/TNSRE.2019.2896659,https://arxiv.org/html/1809.10932,"Different dataset, modalities and CV protocol; contextual comparison only."
+DeepSleepNet (Supratak et al.),2017,"Sleep-EDF, 20 subjects",Single-channel EEG Fpz-Cz,20-fold subject cross-validation,0.82,0.769,0.76,10.1109/TNSRE.2017.2721116,https://arxiv.org/pdf/1703.04046,"Different dataset, EEG montage and CV protocol; contextual comparison only."
+Current Fast SCFormer-U (raw),2026,"HMC subset, 24 recordings",Four EEG channels,Fixed subject/recording split 16/4/4; corrected SN001 test input,0.5375033130135171,0.5512388794565524,0.4060144433755605,,HMC-PPT-20261007-01,Not a like-for-like benchmark or state-of-the-art claim.

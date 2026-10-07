@@ -1,0 +1,170 @@
+[
+  {
+    "subject_id": "SN017",
+    "lights_off_seconds": 35.72,
+    "lights_on_seconds": 33409.54,
+    "lights_interval_minutes": 556.2303333333333,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN006",
+    "lights_off_seconds": 34.26,
+    "lights_on_seconds": 25966.34,
+    "lights_interval_minutes": 432.20133333333337,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN020",
+    "lights_off_seconds": 33.77,
+    "lights_on_seconds": 28420.08,
+    "lights_interval_minutes": 473.10516666666666,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN025",
+    "lights_off_seconds": 43.21,
+    "lights_on_seconds": null,
+    "lights_interval_minutes": null,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN015",
+    "lights_off_seconds": 36.04,
+    "lights_on_seconds": 25998.01,
+    "lights_interval_minutes": 432.69949999999994,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN011",
+    "lights_off_seconds": 60.68,
+    "lights_on_seconds": 34200.51,
+    "lights_interval_minutes": 568.9971666666667,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN019",
+    "lights_off_seconds": 59.34,
+    "lights_on_seconds": 25189.74,
+    "lights_interval_minutes": 418.84000000000003,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN012",
+    "lights_off_seconds": 50.45,
+    "lights_on_seconds": 28108.2,
+    "lights_interval_minutes": 467.62916666666666,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN016",
+    "lights_off_seconds": 47.71,
+    "lights_on_seconds": 32610.12,
+    "lights_interval_minutes": 542.7068333333333,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN018",
+    "lights_off_seconds": 36.35,
+    "lights_on_seconds": 25833.79,
+    "lights_interval_minutes": 429.9573333333334,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN002",
+    "lights_off_seconds": 51.99,
+    "lights_on_seconds": 25661.65,
+    "lights_interval_minutes": 426.8276666666667,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN013",
+    "lights_off_seconds": 52.08,
+    "lights_on_seconds": 30102.97,
+    "lights_interval_minutes": 500.84816666666666,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN023",
+    "lights_off_seconds": 36.79,
+    "lights_on_seconds": 23722.26,
+    "lights_interval_minutes": 394.7578333333333,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN007",
+    "lights_off_seconds": 42.06,
+    "lights_on_seconds": 31000.38,
+    "lights_interval_minutes": 515.972,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN010",
+    "lights_off_seconds": 46.28,
+    "lights_on_seconds": null,
+    "lights_interval_minutes": null,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN003",
+    "lights_off_seconds": 40.08,
+    "lights_on_seconds": 28604.93,
+    "lights_interval_minutes": 476.0808333333333,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN024",
+    "lights_off_seconds": 42.29,
+    "lights_on_seconds": 25681.31,
+    "lights_interval_minutes": 427.317,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN005",
+    "lights_off_seconds": 43.83,
+    "lights_on_seconds": 28760.86,
+    "lights_interval_minutes": 478.61716666666666,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN021",
+    "lights_off_seconds": 33.79,
+    "lights_on_seconds": 28657.32,
+    "lights_interval_minutes": 477.0588333333333,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN008",
+    "lights_off_seconds": 33.74,
+    "lights_on_seconds": 25390.94,
+    "lights_interval_minutes": 422.61999999999995,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN009",
+    "lights_off_seconds": 51.84,
+    "lights_on_seconds": 27010.49,
+    "lights_interval_minutes": 449.31083333333333,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN001",
+    "lights_off_seconds": 33.43,
+    "lights_on_seconds": 25618.74,
+    "lights_interval_minutes": 426.4218333333334,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN004",
+    "lights_off_seconds": 43.18,
+    "lights_on_seconds": 30456.66,
+    "lights_interval_minutes": 506.8913333333333,
+    "used_for_source_biomarker_denominator": false
+  },
+  {
+    "subject_id": "SN022",
+    "lights_off_seconds": 43.45,
+    "lights_on_seconds": 30031.11,
+    "lights_interval_minutes": 499.7943333333333,
+    "used_for_source_biomarker_denominator": false
+  }
+]

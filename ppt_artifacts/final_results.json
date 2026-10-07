@@ -1,0 +1,234 @@
+{
+  "run_id": "HMC-PPT-20261007-01",
+  "checkpoint": "/content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras",
+  "checkpoint_sha256": "3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226",
+  "class_order": [
+    "Wake",
+    "N1",
+    "N2",
+    "N3",
+    "REM"
+  ],
+  "raw_metrics": {
+    "accuracy": 0.5375033130135171,
+    "balanced_accuracy": 0.5782594449937964,
+    "macro_precision": 0.5569050891048576,
+    "macro_recall": 0.5782594449937964,
+    "macro_f1": 0.5512388794565524,
+    "weighted_f1": 0.5491507145663629,
+    "cohen_kappa": 0.4060144433755605,
+    "test_epochs": 3773,
+    "test_subjects": 4
+  },
+  "smoothed_metrics": {
+    "accuracy": 0.6199310893188444,
+    "balanced_accuracy": 0.6426037576242516,
+    "macro_precision": 0.6079088770185163,
+    "macro_recall": 0.6426037576242516,
+    "macro_f1": 0.6176018535665013,
+    "weighted_f1": 0.6192827858370967,
+    "cohen_kappa": 0.49992799974416346,
+    "test_epochs": 3773,
+    "test_subjects": 4
+  },
+  "split": {
+    "subjects": 24,
+    "recordings": 24,
+    "leakage_free": true,
+    "split_subject_ids": {
+      "train": [
+        "SN017",
+        "SN006",
+        "SN020",
+        "SN025",
+        "SN015",
+        "SN011",
+        "SN019",
+        "SN012",
+        "SN016",
+        "SN018",
+        "SN002",
+        "SN013",
+        "SN023",
+        "SN007",
+        "SN010",
+        "SN003"
+      ],
+      "val": [
+        "SN024",
+        "SN005",
+        "SN021",
+        "SN008"
+      ],
+      "test": [
+        "SN009",
+        "SN001",
+        "SN004",
+        "SN022"
+      ]
+    },
+    "splits": {
+      "train": {
+        "subjects": 16,
+        "epochs": 15216
+      },
+      "val": {
+        "subjects": 4,
+        "epochs": 3619
+      },
+      "test": {
+        "subjects": 4,
+        "epochs": 3773
+      }
+    },
+    "total_usable_epochs": 22608,
+    "subject_identity_basis": "Repository treats SN recording identifiers as subject identifiers; no separate person mapping supplied.",
+    "recording_id_disjoint": true,
+    "independent_person_identity_mapping_available": false
+  },
+  "calibration": {
+    "ECE_10_equal_width_bins": 0.07045483804005062,
+    "multiclass_brier_sum": 0.5879372997182593,
+    "negative_log_likelihood": 1.1011897761547158,
+    "error_detection_AUROC": 0.5798189247384751,
+    "AURC_discrete_mean": 0.36282658459371836,
+    "uncertainty_definition": "5 / sum(evidence + 1)",
+    "correct_uncertainty_mean": 0.22802348259068397,
+    "incorrect_uncertainty_mean": 0.23548070754013387,
+    "correct_uncertainty_median": 0.22871347888996618,
+    "incorrect_uncertainty_median": 0.23384689284617105,
+    "correct_epochs": 2028,
+    "incorrect_epochs": 1745,
+    "probabilities_calibrated": false
+  },
+  "selected_checkpoint_epoch": 9,
+  "model_parameters": 226309,
+  "test_subjects": [
+    "SN009",
+    "SN001",
+    "SN004",
+    "SN022"
+  ],
+  "per_subject": [
+    {
+      "subject_id": "SN009",
+      "epochs": 901,
+      "raw_accuracy": 0.658157602663707,
+      "smoothed_accuracy": 0.6992230854605993,
+      "gaps": 0
+    },
+    {
+      "subject_id": "SN001",
+      "epochs": 854,
+      "raw_accuracy": 0.4812646370023419,
+      "smoothed_accuracy": 0.5807962529274004,
+      "gaps": 0
+    },
+    {
+      "subject_id": "SN004",
+      "epochs": 1016,
+      "raw_accuracy": 0.515748031496063,
+      "smoothed_accuracy": 0.6299212598425197,
+      "gaps": 0
+    },
+    {
+      "subject_id": "SN022",
+      "epochs": 1002,
+      "raw_accuracy": 0.499001996007984,
+      "smoothed_accuracy": 0.5718562874251497,
+      "gaps": 0
+    }
+  ],
+  "limitations": [
+    "Only four test recordings; no external validation.",
+    "Final training hardware and global training RNG state not preserved.",
+    "Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.",
+    "Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.",
+    "Rule thresholds have no clinical validation in this project.",
+    "Evidential probabilities are not a separately fitted self-calibrated condition.",
+    "SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping."
+  ],
+  "evaluation_complete": true,
+  "clinical_validation": false,
+  "decoder_gap_boundary_correction": true,
+  "input_repairs": [
+    {
+      "subject_id": "SN001",
+      "original_path": "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed/SN001.npz",
+      "original_sha256": "147ba73f1457df4a66dedef90b0c326ff926f54644046bd09a408e055a203121",
+      "original_epochs": 190,
+      "corrected_path": "/content/ppt_corrected_test_inputs/SN001.npz",
+      "corrected_epochs": 854,
+      "reason": "saved label sequence could not be matched to complete EDF annotations",
+      "original_data_preserved": true,
+      "requires_retraining": false,
+      "test_only_reconstruction": true
+    }
+  ],
+  "checkpoint_training_split_matches_saved_counts": true,
+  "presentation_path": "/mnt/c/Users/Rikin Parekh/AntiGravity/EEG-Sleep-Classification/final_sleep_stage_project_presentation.pptx",
+  "evaluation_command": "/home/rikin_parekh/.venvs/colab-cli/bin/colab --auth oauth2 --config /tmp/eeg-colab-checks/sessions.json exec -s eeg-diagnostics -f ppt_artifacts/evaluate_authoritative_run.py --timeout 1800",
+  "presentation_sha256": "07d00b7584beb74d4373afa53a9ff9d27c91a3ea02766416cf13628e2694c91c",
+  "slides_modified": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41
+  ],
+  "slides_removed": [],
+  "validation": {
+    "status": "passed_with_documented_scientific_limitations",
+    "numerical_checks_passed": 218,
+    "native_powerpoint_open": true,
+    "slides_rendered_and_inspected": 41,
+    "measured_overflows": 0,
+    "original_notebooks_preserved": true,
+    "original_ppt_backup_verified": true,
+    "requested_artifacts_present": true,
+    "recording_id_split_disjoint": true,
+    "independent_person_identity_mapping_available": false,
+    "all_result_slides_use_one_run": true,
+    "all_raw_smoothed_epochs_identical": true,
+    "no_mock_result_assets": true,
+    "no_placeholder_strings": true
+  },
+  "generated_artifact_count": 200,
+  "artifact_count_scope": "All files recursively under ppt_artifacts, including renders, scripts, logs and transferred evidence."
+}

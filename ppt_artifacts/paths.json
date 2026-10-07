@@ -1,0 +1,13 @@
+{
+  "PPTX_PATH": "/mnt/c/Users/Rikin Parekh/Documents/minorProject/mid.pptx",
+  "PROJECT_ROOT": "/mnt/c/Users/Rikin Parekh/AntiGravity/EEG-Sleep-Classification",
+  "NOTEBOOK_DIR": "/mnt/c/Users/Rikin Parekh/AntiGravity/EEG-Sleep-Classification",
+  "SOURCE_DIR": "/mnt/c/Users/Rikin Parekh/AntiGravity/EEG-Sleep-Classification",
+  "DATA_DIR": "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed",
+  "CHECKPOINT_DIR": "/content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS",
+  "OUTPUT_DIR": "/mnt/c/Users/Rikin Parekh/AntiGravity/EEG-Sleep-Classification/ppt_artifacts",
+  "REFERENCE_DIR": "/mnt/c/Users/Rikin Parekh/AntiGravity/EEG-Sleep-Classification/ppt_artifacts/references",
+  "run_id": "HMC-PPT-20261007-01",
+  "LOCAL_CHECKPOINT_PATH": "/mnt/c/Users/Rikin Parekh/AntiGravity/EEG-Sleep-Classification/ppt_artifacts/authoritative_checkpoint.keras",
+  "CORRECTED_TEST_INPUT_PATH": "/mnt/c/Users/Rikin Parekh/AntiGravity/EEG-Sleep-Classification/ppt_artifacts/corrected_test_inputs/SN001.npz"
+}

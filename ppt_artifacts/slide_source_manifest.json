@@ -1,0 +1,359 @@
+[
+  {
+    "slide": 1,
+    "title": "Cover",
+    "sources": [
+      "user-supplied project metadata"
+    ]
+  },
+  {
+    "slide": 2,
+    "title": "Problem Statement",
+    "sources": [
+      "project scope",
+      "preprocessing_config.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 3,
+    "title": "Project Objectives",
+    "sources": [
+      "checkpoint_config.json",
+      "transition_config.json",
+      "biomarker_equations.md"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 4,
+    "title": "Dataset and Experimental Split",
+    "sources": [
+      "split_summary.json",
+      "split_subjects.csv",
+      "input_repairs.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 5,
+    "title": "EEG Preprocessing",
+    "sources": [
+      "preprocessing_config.json",
+      "eeg_example_metadata.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 6,
+    "title": "Sleep Stage Distribution",
+    "sources": [
+      "stage_distribution.csv",
+      "class_weights.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 7,
+    "title": "Fast SCFormer-U Architecture",
+    "sources": [
+      "checkpoint_config.json",
+      "model_layers.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 8,
+    "title": "Role of Each Model Component",
+    "sources": [
+      "checkpoint_config.json",
+      "model_layers.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 9,
+    "title": "Uncertainty-Aware Classification",
+    "sources": [
+      "calibration_metrics.json",
+      "test_uncertainty.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 10,
+    "title": "Model Training Progress",
+    "sources": [
+      "training_history.csv",
+      "hyperparameters.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 11,
+    "title": "Sleep-Stage Classification Performance",
+    "sources": [
+      "overall_metrics.json",
+      "test_epoch_predictions.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 12,
+    "title": "Sleep Stage Confusion Matrix",
+    "sources": [
+      "confusion_matrix_normalized.csv",
+      "classification_report.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 13,
+    "title": "Class-Wise Classification Performance",
+    "sources": [
+      "classification_report.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 14,
+    "title": "Uncertainty and Calibration",
+    "sources": [
+      "calibration_metrics.json",
+      "calibration_bins.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 15,
+    "title": "Soft-Viterbi Sleep Stage Refinement",
+    "sources": [
+      "soft_viterbi_pseudocode.txt",
+      "transition_config.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 16,
+    "title": "Sleep Stage Transition Modeling",
+    "sources": [
+      "transition_matrix.csv",
+      "transition_config.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 17,
+    "title": "Raw vs Smoothed Sequence \u2014 SN009",
+    "sources": [
+      "test_epoch_predictions.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 18,
+    "title": "Impact of Sequence Smoothing",
+    "sources": [
+      "raw_vs_smoothed_metrics.csv",
+      "smoothing_delta.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 19,
+    "title": "Personalized Sleep Health Indicators",
+    "sources": [
+      "biomarker_equations.md",
+      "subject_biomarkers.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 20,
+    "title": "Rule-Based Sleep Health Risk Stratification",
+    "sources": [
+      "risk_rules.json",
+      "risk_rules_table.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 21,
+    "title": "Test Subject Sleep Health Profiles",
+    "sources": [
+      "subject_risk_profiles.csv",
+      "biomarker_validation.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 22,
+    "title": "Complete End-to-End Framework",
+    "sources": [
+      "evaluate_authoritative_run.py",
+      "final_results.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 23,
+    "title": "Project Progress \u2014 Verified Deliverables",
+    "sources": [
+      "final_results.json",
+      "input_repairs.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 24,
+    "title": "Current Research Limitations",
+    "sources": [
+      "final_results.json",
+      "calibration_metrics.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 25,
+    "title": "Future Work",
+    "sources": [
+      "verified scope and limitations"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 26,
+    "title": "Verified Example System Output",
+    "sources": [
+      "eeg_example_metadata.json",
+      "subject_risk_profiles.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 27,
+    "title": "Conclusion",
+    "sources": [
+      "final_results.json",
+      "overall_metrics.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 28,
+    "title": "Thank You",
+    "sources": [
+      "user-supplied project metadata"
+    ]
+  },
+  {
+    "slide": 29,
+    "title": "Appendix",
+    "sources": [
+      "verified artifact package"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 30,
+    "title": "Appendix \u2014 Model Summary",
+    "sources": [
+      "model_layers.csv",
+      "model_summary.txt"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 31,
+    "title": "Appendix \u2014 Classification Report",
+    "sources": [
+      "classification_report.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 32,
+    "title": "Appendix \u2014 Raw Confusion Counts",
+    "sources": [
+      "confusion_matrix_counts.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 33,
+    "title": "Appendix \u2014 Soft-Viterbi Confusion Matrix",
+    "sources": [
+      "smoothed_confusion_matrix_normalized.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 34,
+    "title": "Appendix \u2014 Risk\u2013Coverage Curve",
+    "sources": [
+      "risk_coverage_data.csv",
+      "calibration_metrics.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 35,
+    "title": "Appendix \u2014 Reliability and Calibration",
+    "sources": [
+      "calibration_bins.csv",
+      "calibration_metrics.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 36,
+    "title": "Appendix \u2014 Training Class Weights",
+    "sources": [
+      "class_weights.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 37,
+    "title": "Appendix \u2014 Final Hyperparameters",
+    "sources": [
+      "hyperparameters.json",
+      "checkpoint_config.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 38,
+    "title": "Appendix \u2014 Implemented Biomarker Equations",
+    "sources": [
+      "biomarker_equations.md"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 39,
+    "title": "Appendix \u2014 Weighted Viterbi Details",
+    "sources": [
+      "soft_viterbi_pseudocode.txt",
+      "transition_config.json"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 40,
+    "title": "Appendix \u2014 Additional Test Hypnograms",
+    "sources": [
+      "test_epoch_predictions.csv"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  },
+  {
+    "slide": 41,
+    "title": "Appendix \u2014 Related Literature",
+    "sources": [
+      "literature_comparison.csv",
+      "references.txt"
+    ],
+    "run_id": "HMC-PPT-20261007-01"
+  }
+]

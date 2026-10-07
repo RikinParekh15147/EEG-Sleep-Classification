@@ -1,0 +1,57 @@
+Training the Sleep Health Profiler model...
+Epoch 1/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.3557 - loss: 1.5525
+Epoch 1: val_evidential_accuracy improved from None to 0.16524, saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+
+Epoch 1: finished saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m254s[0m 2s/step - evidential_accuracy: 0.4426 - loss: 1.4638 - val_evidential_accuracy: 0.1652 - val_loss: 1.7381
+Epoch 2/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.5898 - loss: 1.1711
+Epoch 2: val_evidential_accuracy improved from 0.16524 to 0.17684, saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+
+Epoch 2: finished saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m261s[0m 2s/step - evidential_accuracy: 0.6033 - loss: 1.1376 - val_evidential_accuracy: 0.1768 - val_loss: 1.9230
+Epoch 3/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.6685 - loss: 1.0284
+Epoch 3: val_evidential_accuracy improved from 0.17684 to 0.23902, saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+
+Epoch 3: finished saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m262s[0m 2s/step - evidential_accuracy: 0.6715 - loss: 1.0163 - val_evidential_accuracy: 0.2390 - val_loss: 1.8245
+Epoch 4/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.7032 - loss: 0.9493
+Epoch 4: val_evidential_accuracy improved from 0.23902 to 0.41393, saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+
+Epoch 4: finished saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m263s[0m 2s/step - evidential_accuracy: 0.6995 - loss: 0.9534 - val_evidential_accuracy: 0.4139 - val_loss: 1.4167
+Epoch 5/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.7123 - loss: 0.9055
+Epoch 5: val_evidential_accuracy improved from 0.41393 to 0.60901, saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+
+Epoch 5: finished saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m257s[0m 2s/step - evidential_accuracy: 0.7165 - loss: 0.9042 - val_evidential_accuracy: 0.6090 - val_loss: 1.0652
+Epoch 6/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.7322 - loss: 0.8672
+Epoch 6: val_evidential_accuracy improved from 0.60901 to 0.64465, saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+
+Epoch 6: finished saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m248s[0m 2s/step - evidential_accuracy: 0.7353 - loss: 0.8685 - val_evidential_accuracy: 0.6447 - val_loss: 1.0124
+Epoch 7/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.7460 - loss: 0.8319
+Epoch 7: val_evidential_accuracy did not improve from 0.64465
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m253s[0m 2s/step - evidential_accuracy: 0.7447 - loss: 0.8376 - val_evidential_accuracy: 0.6267 - val_loss: 1.0254
+Epoch 8/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.7540 - loss: 0.8090
+Epoch 8: val_evidential_accuracy did not improve from 0.64465
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m249s[0m 2s/step - evidential_accuracy: 0.7499 - loss: 0.8178 - val_evidential_accuracy: 0.6444 - val_loss: 1.0082
+Epoch 9/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.7619 - loss: 0.7868
+Epoch 9: val_evidential_accuracy improved from 0.64465 to 0.67975, saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+
+Epoch 9: finished saving model to /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m257s[0m 2s/step - evidential_accuracy: 0.7594 - loss: 0.7938 - val_evidential_accuracy: 0.6797 - val_loss: 0.9186
+Epoch 10/10
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 2s/step - evidential_accuracy: 0.7695 - loss: 0.7664
+Epoch 10: val_evidential_accuracy did not improve from 0.67975
+[1m119/119[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m266s[0m 2s/step - evidential_accuracy: 0.7662 - loss: 0.7780 - val_evidential_accuracy: 0.6524 - val_loss: 1.0005
+Restoring model weights from the end of the best epoch: 9.
+Training successfully completed!

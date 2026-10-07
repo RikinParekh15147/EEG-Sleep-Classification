@@ -1,0 +1,47 @@
+{
+  "scope": "Rule-based research profile; not a medical diagnosis; thresholds not clinically validated here",
+  "source_notebook_cell_zero_based": 215,
+  "inputs": {
+    "SE": "percent of evaluated duration",
+    "WASO": "minutes between first and last sleep epoch",
+    "N3": "percent of evaluated epochs",
+    "SFI": "N2/N3/REM to Wake/N1 transitions per hour of scored sleep"
+  },
+  "flags": [
+    {
+      "name": "Low SE",
+      "condition": "SE < 75",
+      "unit": "%"
+    },
+    {
+      "name": "High WASO",
+      "condition": "WASO > 60",
+      "unit": "min"
+    },
+    {
+      "name": "Low N3",
+      "condition": "N3 < 10",
+      "unit": "%"
+    },
+    {
+      "name": "High SFI",
+      "condition": "SFI > 10",
+      "unit": "transitions / sleep hour"
+    }
+  ],
+  "precedence": [
+    {
+      "category": "High Risk",
+      "logic": "flag_count >= 3 OR SE < 65 OR SFI > 15"
+    },
+    {
+      "category": "Mild Risk",
+      "logic": "otherwise flag_count >= 1"
+    },
+    {
+      "category": "Healthy",
+      "logic": "otherwise no flags"
+    }
+  ],
+  "missing_values": "Original function has no guard. New evaluation returns Unclassified for missing/nonfinite inputs; no such test cases occurred."
+}

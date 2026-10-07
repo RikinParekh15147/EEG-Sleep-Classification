@@ -1,0 +1,15 @@
+{
+  "ECE_10_equal_width_bins": 0.07045483804005062,
+  "multiclass_brier_sum": 0.5879372997182593,
+  "negative_log_likelihood": 1.1011897761547158,
+  "error_detection_AUROC": 0.5798189247384751,
+  "AURC_discrete_mean": 0.36282658459371836,
+  "uncertainty_definition": "5 / sum(evidence + 1)",
+  "correct_uncertainty_mean": 0.22802348259068397,
+  "incorrect_uncertainty_mean": 0.23548070754013387,
+  "correct_uncertainty_median": 0.22871347888996618,
+  "incorrect_uncertainty_median": 0.23384689284617105,
+  "correct_epochs": 2028,
+  "incorrect_epochs": 1745,
+  "probabilities_calibrated": false
+}

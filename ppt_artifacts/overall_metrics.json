@@ -1,0 +1,25 @@
+{
+  "run_id": "HMC-PPT-20261007-01",
+  "raw": {
+    "accuracy": 0.5375033130135171,
+    "balanced_accuracy": 0.5782594449937964,
+    "macro_precision": 0.5569050891048576,
+    "macro_recall": 0.5782594449937964,
+    "macro_f1": 0.5512388794565524,
+    "weighted_f1": 0.5491507145663629,
+    "cohen_kappa": 0.4060144433755605,
+    "test_epochs": 3773,
+    "test_subjects": 4
+  },
+  "soft_viterbi": {
+    "accuracy": 0.6199310893188444,
+    "balanced_accuracy": 0.6426037576242516,
+    "macro_precision": 0.6079088770185163,
+    "macro_recall": 0.6426037576242516,
+    "macro_f1": 0.6176018535665013,
+    "weighted_f1": 0.6192827858370967,
+    "cohen_kappa": 0.49992799974416346,
+    "test_epochs": 3773,
+    "test_subjects": 4
+  }
+}

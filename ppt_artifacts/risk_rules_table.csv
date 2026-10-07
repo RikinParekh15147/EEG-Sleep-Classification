@@ -1,0 +1,8 @@
+rule_type,category,condition,units,precedence
+flag,Low SE,SE < 75,%,
+flag,High WASO,WASO > 60,min,
+flag,Low N3,N3 < 10,%,
+flag,High SFI,SFI > 10,transitions / sleep hour,
+assignment,High Risk,flag_count >= 3 OR SE < 65 OR SFI > 15,"SE %, SFI transitions/sleep hour",1
+assignment,Mild Risk,otherwise flag_count >= 1,"SE %, SFI transitions/sleep hour",2
+assignment,Healthy,otherwise no flags,"SE %, SFI transitions/sleep hour",3

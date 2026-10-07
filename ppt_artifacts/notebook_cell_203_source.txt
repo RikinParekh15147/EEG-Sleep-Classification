@@ -1,0 +1,34 @@
+import os
+import json
+import random
+
+PREPROC_PATH = "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed"
+
+# Perform a fresh directory search to locate the newly generated .npz subject files
+npz_files = sorted([f for f in os.listdir(PREPROC_PATH) if f.endswith(".npz")])
+subjects = [f.replace(".npz", "") for f in npz_files]
+
+random.seed(42)
+random.shuffle(subjects)
+
+train_ratio, val_ratio, test_ratio = 0.70, 0.15, 0.15
+n = len(subjects)
+
+if n == 0:
+    print(f"WARNING: No preprocessed .npz files found in {PREPROC_PATH}. Please make sure Step 1 (cell 72f5873b) has run and finished successfully.")
+else:
+    train_end = int(n * train_ratio)
+    val_end = int(n * (train_ratio + val_ratio))
+
+    split_info = {
+        "train_subjects": subjects[:train_end],
+        "val_subjects": subjects[train_end:val_end],
+        "test_subjects": subjects[val_end:]
+    }
+
+    split_path = os.path.join(PREPROC_PATH, "subject_split.json")
+    with open(split_path, "w") as f:
+        json.dump(split_info, f, indent=4)
+
+    print(f"Split successfully created and saved to {split_path}!")
+    print(f"Train: {len(split_info['train_subjects'])}, Val: {len(split_info['val_subjects'])}, Test: {len(split_info['test_subjects'])}")

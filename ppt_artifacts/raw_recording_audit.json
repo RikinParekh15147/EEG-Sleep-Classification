@@ -1,0 +1,770 @@
+[
+  {
+    "subject_id": "SN017",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN017.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN017_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 33441.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 1114,
+    "complete_30s_annotation_epochs": 1114,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 35.72,
+        "duration": 0.0,
+        "description": "Lights off@@EEG O2-A1"
+      },
+      {
+        "onset": 33409.54,
+        "duration": 0.0,
+        "description": "Lights on@@EEG O2-A1"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN006",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN006.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN006_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 25998.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 866,
+    "complete_30s_annotation_epochs": 866,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 34.26,
+        "duration": 0.0,
+        "description": "Lights off@@Resp abdomen"
+      },
+      {
+        "onset": 25966.34,
+        "duration": 0.0,
+        "description": "Lights on@@Pulse"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN020",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN020.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN020_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 28452.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 948,
+    "complete_30s_annotation_epochs": 948,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 33.77,
+        "duration": 0.0,
+        "description": "Lights off@@EEG F4-A1"
+      },
+      {
+        "onset": 28420.08,
+        "duration": 0.0,
+        "description": "Lights on@@EEG Fpz-Cz"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN025",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN025.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN025_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 29701.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 990,
+    "complete_30s_annotation_epochs": 990,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 43.21,
+        "duration": 0.0,
+        "description": "Lights off@@Body position"
+      },
+      {
+        "onset": 29670.35,
+        "duration": 0.0,
+        "description": "Lights on@@Body position"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN015",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN015.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN015_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 26030.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 867,
+    "complete_30s_annotation_epochs": 867,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 36.04,
+        "duration": 0.0,
+        "description": "Lights off@@SaO2"
+      },
+      {
+        "onset": 25998.01,
+        "duration": 0.0,
+        "description": "Lights on@@SaO2"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN011",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN011.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN011_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 34232.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 1141,
+    "complete_30s_annotation_epochs": 1141,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 60.68,
+        "duration": 0.0,
+        "description": "Lights off@@EEG F4-A1"
+      },
+      {
+        "onset": 34200.51,
+        "duration": 0.0,
+        "description": "Lights on@@EEG F4-A1"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN019",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN019.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN019_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 25221.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 840,
+    "complete_30s_annotation_epochs": 840,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 59.34,
+        "duration": 0.0,
+        "description": "Lights off@@EEG Fpz-Cz"
+      },
+      {
+        "onset": 25189.74,
+        "duration": 0.0,
+        "description": "Lights on@@EEG Fpz-Cz"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN012",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN012.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN012_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 28140.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 937,
+    "complete_30s_annotation_epochs": 937,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 50.45,
+        "duration": 0.0,
+        "description": "Lights off@@Resp nasal"
+      },
+      {
+        "onset": 28108.2,
+        "duration": 0.0,
+        "description": "Lights on@@Resp chest"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN016",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN016.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN016_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 32642.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 1088,
+    "complete_30s_annotation_epochs": 1088,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 47.71,
+        "duration": 0.0,
+        "description": "Lights off@@EMG RAT"
+      },
+      {
+        "onset": 32610.12,
+        "duration": 0.0,
+        "description": "Lights on@@Resp nasal"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN018",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN018.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN018_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 25865.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 862,
+    "complete_30s_annotation_epochs": 862,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 36.35,
+        "duration": 0.0,
+        "description": "Lights off@@EMG RAT"
+      },
+      {
+        "onset": 25833.79,
+        "duration": 0.0,
+        "description": "Lights on@@Resp nasal"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN002",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN002.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN002_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 25693.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 856,
+    "complete_30s_annotation_epochs": 856,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 51.99,
+        "duration": 0.0,
+        "description": "Lights off@@EMG RAT"
+      },
+      {
+        "onset": 25661.65,
+        "duration": 0.0,
+        "description": "Lights on@@Resp chest"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN013",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN013.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN013_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 30134.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 1004,
+    "complete_30s_annotation_epochs": 1004,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 52.08,
+        "duration": 0.0,
+        "description": "Lights off@@EMG RAT"
+      },
+      {
+        "onset": 30102.97,
+        "duration": 0.0,
+        "description": "Lights on@@Resp chest"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN023",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN023.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN023_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 23754.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 791,
+    "complete_30s_annotation_epochs": 791,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 36.79,
+        "duration": 0.0,
+        "description": "Lights off"
+      },
+      {
+        "onset": 23722.26,
+        "duration": 0.0,
+        "description": "Lights on@@EEG F4-A1"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN007",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN007.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN007_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 31032.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 1034,
+    "complete_30s_annotation_epochs": 1034,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 42.06,
+        "duration": 0.0,
+        "description": "Lights off@@SaO2"
+      },
+      {
+        "onset": 31000.38,
+        "duration": 0.0,
+        "description": "Lights on@@SaO2"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN010",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN010.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN010_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 27733.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 924,
+    "complete_30s_annotation_epochs": 924,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 46.28,
+        "duration": 0.0,
+        "description": "Lights off@@Body position"
+      },
+      {
+        "onset": 27701.74,
+        "duration": 0.0,
+        "description": "Lights on@@Body position"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN003",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN003.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN003_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 28636.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 954,
+    "complete_30s_annotation_epochs": 954,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 40.08,
+        "duration": 0.0,
+        "description": "Lights off@@SaO2"
+      },
+      {
+        "onset": 28604.93,
+        "duration": 0.0,
+        "description": "Lights on@@SaO2"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN024",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN024.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN024_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 25713.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 857,
+    "complete_30s_annotation_epochs": 857,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 42.29,
+        "duration": 0.0,
+        "description": "Lights off@@EEG Fpz-Cz"
+      },
+      {
+        "onset": 25681.31,
+        "duration": 0.0,
+        "description": "Lights on@@EEG Cz-O2"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN005",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN005.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN005_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 28792.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 959,
+    "complete_30s_annotation_epochs": 959,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 43.83,
+        "duration": 0.0,
+        "description": "Lights off@@SaO2"
+      },
+      {
+        "onset": 28760.86,
+        "duration": 0.0,
+        "description": "Lights on@@SaO2"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN021",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN021.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN021_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 28689.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 956,
+    "complete_30s_annotation_epochs": 956,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 33.79,
+        "duration": 0.0,
+        "description": "Lights off@@SaO2"
+      },
+      {
+        "onset": 28657.32,
+        "duration": 0.0,
+        "description": "Lights on@@SaO2"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN008",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN008.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN008_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 25422.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 847,
+    "complete_30s_annotation_epochs": 847,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 33.74,
+        "duration": 0.0,
+        "description": "Lights off@@EMG RAT"
+      },
+      {
+        "onset": 25390.94,
+        "duration": 0.0,
+        "description": "Lights on@@EMG RAT"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN009",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN009.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN009_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 27042.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 901,
+    "complete_30s_annotation_epochs": 901,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 51.84,
+        "duration": 0.0,
+        "description": "Lights off@@SaO2"
+      },
+      {
+        "onset": 27010.49,
+        "duration": 0.0,
+        "description": "Lights on@@SaO2"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN001",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN001.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN001_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 25650.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 854,
+    "complete_30s_annotation_epochs": 854,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 33.43,
+        "duration": 0.0,
+        "description": "Lights off@@EEG F4-A1"
+      },
+      {
+        "onset": 25618.74,
+        "duration": 0.0,
+        "description": "Lights on@@EEG Fpz-Cz"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN004",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN004.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN004_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 30488.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 1016,
+    "complete_30s_annotation_epochs": 1016,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 43.18,
+        "duration": 0.0,
+        "description": "Lights off@@Resp chest"
+      },
+      {
+        "onset": 30456.66,
+        "duration": 0.0,
+        "description": "Lights on@@EMG chin"
+      }
+    ]
+  },
+  {
+    "subject_id": "SN022",
+    "raw_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/SN022.edf",
+    "scoring_path": "/content/drive/MyDrive/Sleep_Health_Profiling/Data/HMC/recordings/SN022_sleepscoring.edf",
+    "original_sampling_hz": 256.0,
+    "recording_seconds": 30063.0,
+    "selected_channels": [
+      "EEG F4-M1",
+      "EEG C4-M1",
+      "EEG O2-M1",
+      "EEG C3-M2"
+    ],
+    "saved_epochs": 1002,
+    "complete_30s_annotation_epochs": 1002,
+    "gaps": 0,
+    "annotation_durations": [
+      0.0,
+      30.0
+    ],
+    "lights_markers": [
+      {
+        "onset": 43.45,
+        "duration": 0.0,
+        "description": "Lights off@@EEG Cz-O2"
+      },
+      {
+        "onset": 30031.11,
+        "duration": 0.0,
+        "description": "Lights on@@EEG Fpz-Cz"
+      }
+    ]
+  }
+]

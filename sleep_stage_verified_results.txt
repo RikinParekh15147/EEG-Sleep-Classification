@@ -1,0 +1,43 @@
+Run: HMC-PPT-20261007-01
+Checkpoint: /content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras
+Checkpoint SHA256: 3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226
+Evaluation: Colab CLI --auth oauth2 exec -f ppt_artifacts/evaluate_authoritative_run.py
+Test recordings: SN009, SN001, SN004, SN022
+Test epochs: 3773
+Raw results: {
+  "accuracy": 0.5375033130135171,
+  "balanced_accuracy": 0.5782594449937964,
+  "macro_precision": 0.5569050891048576,
+  "macro_recall": 0.5782594449937964,
+  "macro_f1": 0.5512388794565524,
+  "weighted_f1": 0.5491507145663629,
+  "cohen_kappa": 0.4060144433755605,
+  "test_epochs": 3773,
+  "test_subjects": 4
+}
+Soft-Viterbi results: {
+  "accuracy": 0.6199310893188444,
+  "balanced_accuracy": 0.6426037576242516,
+  "macro_precision": 0.6079088770185163,
+  "macro_recall": 0.6426037576242516,
+  "macro_f1": 0.6176018535665013,
+  "weighted_f1": 0.6192827858370967,
+  "cohen_kappa": 0.49992799974416346,
+  "test_epochs": 3773,
+  "test_subjects": 4
+}
+Input corrections: [
+  {
+    "subject_id": "SN001",
+    "original_path": "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed/SN001.npz",
+    "original_sha256": "147ba73f1457df4a66dedef90b0c326ff926f54644046bd09a408e055a203121",
+    "original_epochs": 190,
+    "corrected_path": "/content/ppt_corrected_test_inputs/SN001.npz",
+    "corrected_epochs": 854,
+    "reason": "saved label sequence could not be matched to complete EDF annotations",
+    "original_data_preserved": true,
+    "requires_retraining": false,
+    "test_only_reconstruction": true
+  }
+]
+Limitations: Only four test recordings; no external validation.; Final training hardware and global training RNG state not preserved.; Notebook execution counts were cleared; saved outputs are historical evidence rather than complete execution provenance.; Test records were evaluated repeatedly in notebook development; not a newly blinded clinical test.; Rule thresholds have no clinical validation in this project.; Evidential probabilities are not a separately fitted self-calibrated condition.; SN identifiers denote recordings; repository assumes one subject per ID and has no independent person-identity mapping.

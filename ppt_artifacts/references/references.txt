@@ -1,0 +1,10 @@
+[1] Phan H et al. SeqSleepNet. IEEE TNSRE 27(3), 400–410 (2019). DOI: 10.1109/TNSRE.2019.2896659.
+    https://arxiv.org/html/1809.10932 ; Sections II, V-A, V-D/Table II.
+[2] Supratak A et al. DeepSleepNet. IEEE TNSRE 25(11), 1998–2007 (2017). DOI: 10.1109/TNSRE.2017.2721116.
+    https://arxiv.org/pdf/1703.04046 ; Tables III and IV and experimental protocol.
+[3] Alvarez-Estevez D, Rijsman RM. HMC sleep staging database v1.1 (2022). DOI: 10.13026/t79q-fr32.
+    https://physionet.org/content/hmc-sleep-staging/1.1/ ; four EEG channels, 256Hz, dataset description.
+[4] Alvarez-Estevez D, Rijsman RM. Inter-database validation of a deep learning approach for automatic sleep scoring.
+    PLoS ONE 16(8), e0256111 (2021). DOI: 10.1371/journal.pone.0256111.
+External metrics are contextual: dataset, modality and protocol differ from the current project.
+No clinical validation or state-of-the-art claim is made.

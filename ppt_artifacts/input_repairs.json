@@ -1,0 +1,14 @@
+[
+  {
+    "subject_id": "SN001",
+    "original_path": "/content/drive/MyDrive/Sleep_Health_Profiling/processed/HMC_preprocessed/SN001.npz",
+    "original_sha256": "147ba73f1457df4a66dedef90b0c326ff926f54644046bd09a408e055a203121",
+    "original_epochs": 190,
+    "corrected_path": "/content/ppt_corrected_test_inputs/SN001.npz",
+    "corrected_epochs": 854,
+    "reason": "saved label sequence could not be matched to complete EDF annotations",
+    "original_data_preserved": true,
+    "requires_retraining": false,
+    "test_only_reconstruction": true
+  }
+]

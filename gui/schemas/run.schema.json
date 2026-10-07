@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sleep Studio run manifest",
+  "type": "object",
+  "required": [
+    "id",
+    "status",
+    "kind",
+    "createdAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "preparing",
+        "running",
+        "downloading",
+        "completed",
+        "failed",
+        "cancelled",
+        "interrupted"
+      ]
+    },
+    "kind": {
+      "enum": [
+        "inference",
+        "preprocess",
+        "training",
+        "baseline"
+      ]
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "settings": {
+      "type": "object"
+    },
+    "checkpoint": {
+      "type": "object"
+    },
+    "inputs": {
+      "type": "array"
+    }
+  }
+}

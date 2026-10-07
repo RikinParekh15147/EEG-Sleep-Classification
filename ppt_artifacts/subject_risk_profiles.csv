@@ -1,0 +1,5 @@
+subject_id,source,Sleep_Efficiency_Pct,WASO_Minutes,N3_Deep_Pct,SFI,sleep_minutes,evaluated_duration_minutes,N1_Pct,N2_Pct,REM_Pct,risk_category,reasons,complete_contiguous_record,interpretation
+SN009,soft_viterbi,90.01109877913429,14.0,23.97336293007769,1.1837237977805177,405.5,450.5,6.215316315205328,42.28634850166482,17.53607103218646,Healthy,,True,research evaluated-epoch proxy; time in bed not directly verified
+SN001,soft_viterbi,91.4519906323185,31.5,24.707259953161593,1.8437900128040972,390.5,427.0,12.412177985948478,36.29976580796253,18.0327868852459,Healthy,,True,research evaluated-epoch proxy; time in bed not directly verified
+SN004,soft_viterbi,88.48425196850394,34.5,7.18503937007874,2.2691879866518354,449.5,508.0,11.220472440944881,24.311023622047244,45.767716535433074,Mild Risk,N3 <10%,True,research evaluated-epoch proxy; time in bed not directly verified
+SN022,soft_viterbi,84.03193612774452,74.0,9.081836327345309,1.995249406175772,421.0,501.0,31.437125748502993,29.64071856287425,13.872255489021956,Mild Risk,WASO >60 min; N3 <10%,True,research evaluated-epoch proxy; time in bed not directly verified

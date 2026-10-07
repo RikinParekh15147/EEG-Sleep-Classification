@@ -1,0 +1,15 @@
+* text=auto
+*.py text eol=lf
+*.cjs text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.bat text eol=crlf
+*.ipynb text eol=lf
+*.keras binary
+*.npz binary
+*.npy binary
+*.png binary
+*.PNG binary
+*.pdf binary
+*.pptx binary

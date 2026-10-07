@@ -1,0 +1,29 @@
+# Local environments and caches
+.colab-cli-venv/
+.uv-cache/
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.pyc
+# Credentials and local application state
+.env
+.env.*
+!.env.example
+**/token.json
+**/sessions.json
+**/sessions.json.lock
+**/oauth_config.json
+gui/.runtime/
+gui/dist/
+gui/test-results/
+gui/playwright-report/
+*.log
+# Transferred datasets and archives (retain small verified metadata/plots/model)
+ppt_artifacts/corrected_test_inputs/
+*.tar.gz
+# Derived presentation renders and temporary Office files
+ppt_artifacts/original_render/
+ppt_artifacts/rendered_slides/
+ppt_short_artifacts/rendered_slides/
+~$*
