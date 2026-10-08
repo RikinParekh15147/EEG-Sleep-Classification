@@ -1,0 +1,95 @@
+{
+  "model_name": "Fast SCFormer-U",
+  "architecture": "hybrid CNN\u2013Transformer/self-attention\u2013BiLSTM",
+  "input_shape": [
+    null,
+    4,
+    3000
+  ],
+  "channels": [
+    "EEG F4-M1",
+    "EEG C4-M1",
+    "EEG O2-M1",
+    "EEG C3-M2"
+  ],
+  "parameters": 226309,
+  "trainable_parameters": 225925,
+  "optimizer_saved": {
+    "module": "keras.optimizers",
+    "class_name": "Adam",
+    "config": {
+      "name": "adam",
+      "learning_rate": 9.999999747378752e-05,
+      "weight_decay": null,
+      "clipnorm": null,
+      "global_clipnorm": null,
+      "clipvalue": null,
+      "use_ema": false,
+      "ema_momentum": 0.99,
+      "ema_overwrite_frequency": null,
+      "loss_scale_factor": null,
+      "gradient_accumulation_steps": null,
+      "beta_1": 0.9,
+      "beta_2": 0.999,
+      "epsilon": 1e-07,
+      "amsgrad": false
+    },
+    "registered_name": null
+  },
+  "learning_rate": 9.999999747378752e-05,
+  "batch_size": 128,
+  "maximum_epochs": 10,
+  "actual_epochs": 10,
+  "selected_checkpoint_epoch": 9,
+  "checkpoint_criterion": "maximum validation evidential accuracy",
+  "scheduler": "none in final training cell 207",
+  "early_stopping": {
+    "monitor": "val_evidential_accuracy",
+    "patience": 5,
+    "mode": "max",
+    "restore_best_weights": true,
+    "triggered": false
+  },
+  "dropout": [
+    0.2,
+    0.1
+  ],
+  "evidential_loss": "label smoothing 0.05; CE(alpha/sum(alpha)) + 0.003*sum(evidence*(1-smoothed_onehot))/5",
+  "regularization": {
+    "evidence_penalty": 0.003,
+    "weight_decay": null,
+    "layer_regularizers": null
+  },
+  "split_seed": 42,
+  "training_seed": "not set in final training cells; earlier cell 90 sets 42 but execution state not recoverable",
+  "training_hardware": "not recorded in final training log or checkpoint; cannot verify",
+  "checkpoint_keras_version": "3.13.2",
+  "checkpoint_sha256": "3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226",
+  "class_weight_method": "N_train/(5*N_class)",
+  "source_notebook_cells_zero_based": [
+    203,
+    205,
+    206,
+    207,
+    211,
+    212,
+    213
+  ],
+  "archived_evaluation_environment": {
+    "numpy": "2.1.3",
+    "pandas": "2.2.3",
+    "tensorflow": "2.21.0",
+    "keras": "3.13.2",
+    "scikit-learn": "1.6.1",
+    "mne": "1.13.2"
+  },
+  "evaluation_environment": {
+    "numpy": "2.1.3",
+    "tensorflow": "2.21.0",
+    "keras": "3.13.2",
+    "scipy": "1.16.3",
+    "scikit-learn": "1.6.1",
+    "mne": null
+  },
+  "source_notebook_cells_scope": "Historical Transformer training cells; unchanged checkpoint, current refinement is separate"
+}

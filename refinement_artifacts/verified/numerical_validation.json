@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "checks": [
+    "All 3,109 evidential probability and uncertainty formulas checked against source float32 output",
+    "raw confusion matrix and aggregate metrics independently recomputed",
+    "refined confusion matrix and aggregate metrics independently recomputed",
+    "SN009 exact N1/N2 sequence, all architecture values, domains and profile reproduced by desktop code",
+    "SN001 exact N1/N2 sequence, all architecture values, domains and profile reproduced by desktop code",
+    "SN004 exact N1/N2 sequence, all architecture values, domains and profile reproduced by desktop code",
+    "SN022 exact N1/N2 sequence, all architecture values, domains and profile reproduced by desktop code",
+    "All 22 complete reference rows and nine coefficients match saved notebook display precision",
+    "Reference means, sample SDs, medians and linear P10/P90 independently recomputed for all 22 fields"
+  ],
+  "epochs_checked": 3109,
+  "profile_sources_checked": 12,
+  "matrix_shape": [
+    4,
+    23
+  ],
+  "reference_shape": [
+    16,
+    23
+  ],
+  "numeric_fields": 22,
+  "deviation_fields": 21,
+  "saved_notebook_metrics_match": true
+}

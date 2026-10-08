@@ -27,3 +27,8 @@ ppt_artifacts/original_render/
 ppt_artifacts/rendered_slides/
 ppt_short_artifacts/rendered_slides/
 ~$*
+refinement_artifacts/build/
+refinement_artifacts/source_renders/
+refinement_artifacts/renders/
+refinement_artifacts/pdf_renders/
+refinement_artifacts/*.zip

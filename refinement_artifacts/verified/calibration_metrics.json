@@ -1,0 +1,9 @@
+{
+  "ECE_10_equal_width_bins": 0.08546594449583456,
+  "multiclass_brier_sum": 0.5557293274906854,
+  "negative_log_likelihood": 1.0375633334703678,
+  "error_detection_AUROC": 0.6284185045272936,
+  "AURC_discrete_mean": 0.3141546862669914,
+  "probabilities_calibrated": false,
+  "uncertainty_definition": "5 / sum(evidence + 1)"
+}

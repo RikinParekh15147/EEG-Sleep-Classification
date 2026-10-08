@@ -1,0 +1,36 @@
+{
+  "reference_recordings": 16,
+  "domains": {
+    "Sleep_Duration": [
+      "TST_minutes"
+    ],
+    "Sleep_Continuity": [
+      "sleep_efficiency_percent",
+      "WASO_minutes",
+      "awakenings",
+      "fragmentation_index"
+    ],
+    "Sleep_Initiation": [
+      "sleep_onset_latency_min"
+    ],
+    "Sleep_Architecture": [
+      "N1_percent",
+      "N2_percent",
+      "N3_percent",
+      "REM_percent"
+    ]
+  },
+  "regions": {
+    "LOW": "x < P10",
+    "NORMAL": "P10 <= x <= P90",
+    "HIGH": "x > P90"
+  },
+  "profile_levels": {
+    "0": "Within Reference",
+    "1": "Mild Deviation",
+    "2": "Moderate Deviation",
+    "3-4": "High Deviation"
+  },
+  "clinical_validation": false,
+  "scope": "Descriptive comparison to HMC training reference"
+}

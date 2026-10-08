@@ -1,0 +1,5 @@
+subject,recording_minutes,TST_minutes,sleep_efficiency_percent,sleep_onset_latency_min,WASO_minutes,REM_latency_min,N1_percent,N2_percent,N3_percent,...,fragmentation_index,delta_relative,theta_relative,alpha_relative,sigma_relative,beta_relative,sigma_delta_ratio,theta_delta_ratio,alpha_delta_ratio,beta_delta_ratio
+SN001,95.0,91.5,96.3158,0.0,3.5,0.0,27.3224,37.1585,26.7760,...,52.4590,0.6749,0.1201,0.0911,0.0420,0.0451,0.0652,0.1827,0.1448,0.0723
+SN004,508.0,442.5,87.1063,3.0,62.5,8.0,27.4576,48.1356,8.0226,...,59.6610,0.6632,0.1348,0.0703,0.0430,0.0611,0.0732,0.2174,0.1197,0.1098
+SN009,450.5,402.0,89.2342,10.0,38.5,16.0,23.3831,43.1592,26.4925,...,31.3433,0.6323,0.1284,0.0863,0.0562,0.0682,0.1067,0.2208,0.1727,0.1522
+SN022,501.0,428.5,85.5289,5.0,67.5,32.0,45.1575,33.7223,11.5519,...,45.3676,0.6826,0.1565,0.0384,0.0254,0.0781,0.0448,0.2513,0.0654,0.1398

@@ -52,7 +52,7 @@ def initialize_config():
 
 def cli(settings, args, request_id, timeout=600):
     executable=cli_path(settings);config=initialize_config()
-    command=[executable,'--auth','oauth2','--config',str(config),'--logtostderr',*args]
+    command=[executable,'--auth','oauth2','--config',str(config),*args]
     with COMMAND_LOCK:
         master,slave=pty.openpty()
         # A small exec wrapper acquires the controlling terminal without preexec_fn

@@ -1,0 +1,36 @@
+{
+  "selected_channels": [
+    "EEG F4-M1",
+    "EEG C4-M1",
+    "EEG O2-M1",
+    "EEG C3-M2"
+  ],
+  "original_sampling_hz_verified": [
+    256.0
+  ],
+  "final_sampling_hz": 100,
+  "bandpass_hz": [
+    0.3,
+    35
+  ],
+  "notch_hz": 50,
+  "filter_order": [
+    "channel selection",
+    "50Hz notch",
+    "0.3\u201335Hz bandpass",
+    "100Hz resampling"
+  ],
+  "epoch_seconds": 30,
+  "normalization": "(X-mean_over_time)/(std_over_time+1e-6), float32, per epoch and channel",
+  "reject_by_annotation": false,
+  "amplitude_rejection": null,
+  "source_notebook_cell_zero_based": 201,
+  "original_artifact_rejection_claim_supported": false,
+  "original_epoch_exclusion_counts": "not saved; gap/missing epoch count calculated from raw annotation mappings",
+  "time_in_bed": "EDF lights-off/on markers are available as a lights interval; source biomarkers use evaluated-epoch duration instead. No independent bed-entry log.",
+  "archived_edf_epoch_mapping": "annotation onsets; no chunk_duration in source; checked against saved labels",
+  "epoch_mapping": "Current stored NPZ sequences, original index order; timing assumes contiguous 30-second epochs",
+  "lights_interval_available_in_archived_edf_audit": true,
+  "current_lights_out_alignment_verified": false,
+  "spectral_features_input": "Stored EEG before the second inference normalization"
+}

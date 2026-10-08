@@ -219,5 +219,5 @@ Soft-Viterbi results: {json.dumps(R['smoothed_metrics'],indent=2)}
 Input corrections: {json.dumps(R['input_repairs'],indent=2)}
 Limitations: {'; '.join(R['limitations'])}
 """
-(ROOT.parent/'sleep_stage_verified_results.txt').write_text(summary)
+(ROOT.parent/'docs/sleep_stage_verified_results.txt').write_text(summary)
 print('Generated plots, equations, risk rules, cited literature and result text from',RUN)

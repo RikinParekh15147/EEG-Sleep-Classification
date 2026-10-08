@@ -1,0 +1,16 @@
+split,stage,epochs
+train,Wake,3202
+train,N1,1553
+train,N2,5254
+train,N3,2926
+train,REM,2281
+val,Wake,649
+val,N1,422
+val,N2,1386
+val,N3,577
+val,REM,585
+test,Wake,309
+test,N1,397
+test,N2,1283
+test,N3,590
+test,REM,530

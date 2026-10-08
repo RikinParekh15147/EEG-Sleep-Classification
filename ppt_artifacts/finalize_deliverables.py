@@ -37,7 +37,7 @@ for i,sl in enumerate(deck.slides,1):
         if sp.has_table:
             lines.extend(' | '.join(c.text for c in row.cells) for row in sp.table.rows)
     lines.append('\nPROVENANCE NOTES\n'+sl.notes_slide.notes_text_frame.text)
-(PROJECT/'presentation_text.txt').write_text('\n'.join(lines),encoding='utf-8')
+(PROJECT/'docs/presentation_text.txt').write_text('\n'.join(lines),encoding='utf-8')
 requested='''final_results.json split_summary.json split_subjects.csv stage_distribution.csv preprocessing_config.json hyperparameters.json model_summary.txt model_layers.csv class_weights.csv training_history.csv training_accuracy.png training_loss.png raw_eeg_example.png preprocessed_eeg_example.png overall_metrics.json classification_report.csv confusion_matrix_counts.csv confusion_matrix_normalized.csv confusion_matrix_normalized.png uncertainty_correct_incorrect.png reliability_diagram.png risk_coverage_curve.png calibration_metrics.json calibration_bins.csv transition_matrix.csv transition_matrix.png raw_vs_smoothed_metrics.csv smoothing_delta.json hypnogram_subject_1.png hypnogram_subject_2.png hypnogram_subject_3.png hypnogram_subject_4.png biomarker_equations.md subject_biomarkers.csv biomarker_validation.csv risk_rules.json risk_rules_table.csv subject_risk_profiles.csv literature_comparison.csv references.txt test_epoch_predictions.csv test_probabilities.npy test_uncertainty.csv soft_viterbi_pseudocode.txt'''.split()
 assert all((ROOT/file).is_file() for file in requested)
 r['presentation_path']=str(PROJECT/'final_sleep_stage_project_presentation.pptx')
@@ -59,6 +59,6 @@ for file in sorted(ROOT.rglob('*')):
         manifest.append({'path':str(file.relative_to(ROOT)),'bytes':file.stat().st_size,'sha256':hashlib.sha256(file.read_bytes()).hexdigest()})
 (ROOT/'artifact_manifest.json').write_text(json.dumps({'run_id':r['run_id'],'self_hash_excluded':True,'files':manifest},indent=2))
 assert r['generated_artifact_count']==len([f for f in ROOT.rglob('*') if f.is_file()])
-with (PROJECT/'ppt_completion_audit.md').open('a') as f:
+with (PROJECT/'docs/ppt_completion_audit.md').open('a') as f:
     f.write(f"\nFinal verification: {n['check_count']} independent checks passed; {len(rows)} text/table cells measured with no overflow above 2 pt tolerance; all 41 native PowerPoint renders inspected. Generated artifact count: {r['generated_artifact_count']} (includes renders/scripts/logs/evidence). Final PPTX SHA256: `{r['presentation_sha256']}`.\n")
 print(json.dumps({'presentation':r['presentation_path'],'artifact_count':r['generated_artifact_count'],'numerical_checks':n['check_count'],'visual_pass':True},indent=2))

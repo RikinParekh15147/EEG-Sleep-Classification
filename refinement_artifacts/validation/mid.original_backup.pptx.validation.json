@@ -1,0 +1,239 @@
+{
+  "schemaVersion": "presentation-finalization.v1",
+  "finalSha256": "0050e12e81f4b310a803243aea50f732e18271765b25ee4be123f2707f63d01d",
+  "byteCount": 585549,
+  "packageIntegrity": {
+    "chart_count": 0,
+    "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
+    "finding_count": 0,
+    "findings": [],
+    "notes_parts_skipped": 41,
+    "relationship_part_count": 87,
+    "slide_count": 41,
+    "status": "pass",
+    "exitCode": 0,
+    "findingCount": 0,
+    "warnings": []
+  },
+  "presentationLayout": {
+    "finding_count": 0,
+    "findings": [],
+    "font_policy": {
+      "checked_text_script_count": 537,
+      "native_font_rendering_verified": false,
+      "observed_font_families": [
+        "Arial"
+      ],
+      "observed_font_use_counts": {
+        "Arial": 537
+      },
+      "passed": true,
+      "performed": true
+    },
+    "slide_count": 41,
+    "slide_size_in": [
+      13.3333,
+      7.5
+    ],
+    "warning_count": 0,
+    "warnings": [],
+    "exitCode": 0,
+    "findingCount": 0,
+    "fontPolicy": {
+      "checked_text_script_count": 537,
+      "native_font_rendering_verified": false,
+      "observed_font_families": [
+        "Arial"
+      ],
+      "observed_font_use_counts": {
+        "Arial": 537
+      },
+      "passed": true,
+      "performed": true
+    }
+  },
+  "fontSelection": {
+    "basis": "design",
+    "approvedFamilies": [
+      "Arial"
+    ],
+    "scriptFonts": {},
+    "referenceSha256": null,
+    "referenceFontsVerifiedInEncodedText": false,
+    "checked_text_script_count": 537,
+    "native_font_rendering_verified": false,
+    "observed_font_families": [
+      "Arial"
+    ],
+    "observed_font_use_counts": {
+      "Arial": 537
+    },
+    "passed": true,
+    "performed": true
+  },
+  "firstPartyImport": {
+    "performed": true,
+    "passed": true,
+    "slideCount": 41,
+    "sha256": "0050e12e81f4b310a803243aea50f732e18271765b25ee4be123f2707f63d01d",
+    "runtimeNodeModules": "C:/Users/Rikin Parekh/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+    "nodeExecutable": "C:\\Program Files\\nodejs\\node.exe"
+  },
+  "nativeTableArithmetic": {
+    "performed": true,
+    "checked_column_count": 3,
+    "checks": [
+      {
+        "column": 1,
+        "comparison": "displayed_values_with_rounding_tolerance",
+        "component_count": 3,
+        "explicit_contract": false,
+        "passed": true,
+        "rounding_places": 0,
+        "slide": 5,
+        "table": 1
+      },
+      {
+        "column": 2,
+        "comparison": "displayed_values_with_rounding_tolerance",
+        "component_count": 3,
+        "explicit_contract": false,
+        "passed": true,
+        "rounding_places": 0,
+        "slide": 5,
+        "table": 1
+      },
+      {
+        "column": 1,
+        "comparison": "displayed_values_with_rounding_tolerance",
+        "component_count": 4,
+        "explicit_contract": false,
+        "passed": false,
+        "rounding_places": 0,
+        "slide": 20,
+        "table": 1
+      }
+    ],
+    "claim_boundary": "Displayed-value arithmetic with rounding tolerance; not source-data verification.",
+    "eligible_table_count": 2,
+    "finding_count": 0,
+    "findings": [],
+    "native_table_count": 16,
+    "passed": true,
+    "schema_version": "presentation-native-table-arithmetic.v1",
+    "skipped_tables": [
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 9,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 11,
+        "table": 1
+      },
+      {
+        "reason": "no_unambiguous_bottom_total",
+        "slide": 12,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 14,
+        "table": 1
+      },
+      {
+        "reason": "no_unambiguous_bottom_total",
+        "slide": 18,
+        "table": 1
+      },
+      {
+        "reason": "no_unambiguous_bottom_total",
+        "slide": 21,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 24,
+        "table": 1
+      },
+      {
+        "reason": "no_unambiguous_bottom_total",
+        "slide": 28,
+        "table": 1
+      },
+      {
+        "reason": "no_unambiguous_bottom_total",
+        "slide": 30,
+        "table": 1
+      },
+      {
+        "reason": "no_unambiguous_bottom_total",
+        "slide": 31,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 33,
+        "table": 1
+      },
+      {
+        "reason": "no_unambiguous_bottom_total",
+        "slide": 34,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 35,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 39,
+        "table": 1
+      }
+    ],
+    "slide_count": 41,
+    "warning_count": 1,
+    "warnings": [
+      {
+        "column": 1,
+        "component_count": 4,
+        "explicit_contract": false,
+        "kind": "native_table_total_mismatch",
+        "slide": 20,
+        "table": 1
+      }
+    ]
+  },
+  "nativeChartTitles": {
+    "performed": true,
+    "checks": [],
+    "finding_count": 0,
+    "findings": [],
+    "native_chart_count": 0,
+    "native_powerpoint_verified": false,
+    "passed": true,
+    "presentation_sha256": "0050e12e81f4b310a803243aea50f732e18271765b25ee4be123f2707f63d01d",
+    "schema_version": "presentation-native-chart-titles.v1",
+    "slide_count": 41,
+    "source_text_emitted": false,
+    "unresolved_linked_title_count": 0
+  },
+  "sourceDerivedPolicyFlags": [
+    "--expected-slide-size-emu",
+    "12192000,6858000",
+    "--cover-role",
+    "none",
+    "--approved-font-family",
+    "Arial"
+  ],
+  "nativeChartValidation": {
+    "detectedOwnerSlides": [],
+    "detectedChartCount": 0,
+    "targetApplication": null,
+    "sourceChartOwnersExplicitlyDeclared": false,
+    "validatorRan": false,
+    "passed": true
+  }
+}

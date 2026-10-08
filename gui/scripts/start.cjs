@@ -2,8 +2,8 @@ const { spawnSync, spawn } = require('node:child_process');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 require('./platform.cjs').prepare(root);
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-const build = spawnSync(npm, ['run', 'build'], { cwd: root, stdio: 'inherit', shell: process.platform === 'win32' });
+const build = spawnSync(process.execPath, [path.join(root,'scripts/build.cjs')], { cwd: root, stdio: 'inherit', shell: false });
+if(build.error){console.error(build.error.message);process.exit(1);}
 if (build.status !== 0) process.exit(build.status || 1);
 const binary = require('electron');
 const env = { ...process.env }; delete env.ELECTRON_RUN_AS_NODE;

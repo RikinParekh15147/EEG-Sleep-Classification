@@ -147,7 +147,7 @@ sl.notes_slide.notes_text_frame.text+='\nDecoder: weighted MAP Viterbi; emission
 sl=prs.slides[9]
 for sp in sl.shapes:
     if sp.has_text_frame and sp.top<Inches(1) and sp.text.strip():sp.text_frame.paragraphs[0].runs[0].text='Personalized Research Profiles'
-sl=prepare(11,'Future Work — Multistage, Multi-model Pipeline',sources=['proposed design; not implemented','multistage_pipeline_proposal.md'])
+sl=prepare(11,'Future Work — Multistage, Multi-model Pipeline',sources=['proposed design; not implemented','docs/multistage_pipeline_proposal.md'])
 flow(sl,['Signal quality\nchecks + flags','Model A: CNN\nWake / REM / NREM','Model B: CNN\nN1 / N2 / N3'],y=1.45,height=1.15)
 text(sl,'Soft composition: P(Nk) = P(NREM) × P(Nk | NREM), k = 1,2,3.\nRetain Wake and REM probabilities; avoid irreversible hard routing.',.85,2.85,11.7,.95,20)
 flow(sl,['Research profile\n+ review flag','Model C: TCN\nsequence refinement','Validation-fitted\nfusion + calibration'],y=4.03,height=1.15)
@@ -156,12 +156,12 @@ for sp in sl.shapes:
     if sp.shape_type==1 and getattr(sp,'auto_shape_type',None)==MSO_SHAPE.RIGHT_ARROW and sp.top>Inches(4):sp.rotation=180
 text(sl,'Fuse hierarchical scores with the current five-stage model as a parallel baseline.\nAdd the sequence model only after measuring whether the experts help.',.85,5.62,11.7,.95,20)
 banner(sl,'Evaluate stage recall, macro F1, calibration and cost; no future performance is claimed.',y=6.65)
-sl=prepare(12,'Conclusion and Future Priorities',sources=['final_results.json','multistage_pipeline_proposal.md'])
+sl=prepare(12,'Conclusion and Future Priorities',sources=['final_results.json','docs/multistage_pipeline_proposal.md'])
 card(sl,'What was demonstrated','One verified hybrid model and training-derived decoding: 53.75% raw → 61.99% decoded accuracy on 3,773 test epochs.',.7,1.45,11.95,1.45)
 card(sl,'Next engineering milestone','Train coarse-stage and NREM experts; validate soft fusion against the current model. Then test a learned temporal refiner as an ablation.',.7,3.08,11.95,1.5)
 card(sl,'What is required before stronger claims','Use grouped validation and a new locked test cohort; seek external validation and expert review of biomarker definitions and risk thresholds.',.7,4.78,11.95,1.5)
 banner(sl,'Current limits: four test recordings, historical test reuse, no clinical or external validation.')
-prs.slides[10].notes_slide.notes_text_frame.text+='\nProposal details: multistage_pipeline_proposal.md. Calibrate the final temporal-model output separately; no uncertainty threshold is set. Use out-of-fold expert predictions to train the refiner; preserve grouped splits and use a genuinely new locked test cohort.'
+prs.slides[10].notes_slide.notes_text_frame.text+='\nProposal details: docs/multistage_pipeline_proposal.md. Calibrate the final temporal-model output separately; no uncertainty threshold is set. Use out-of-fold expert predictions to train the refiner; preserve grouped splits and use a genuinely new locked test cohort.'
 # Renumber every source-retained slide, keep references/provenance in speaker notes.
 for i,sl in enumerate(prs.slides,1):
     for sp in sl.shapes:

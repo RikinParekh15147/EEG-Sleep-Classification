@@ -4,7 +4,7 @@ const { EventEmitter } = require('node:events');
 const { promisify } = require('node:util');
 const exec = promisify(execFile);
 class Bridge extends EventEmitter {
-  constructor(guiRoot) { super(); this.guiRoot=guiRoot; this.pending=new Map(); this.sequence=0; this.child=null; this.distro=null; }
+  constructor(guiRoot) { super(); this.guiRoot=guiRoot; this.pending=new Map(); this.sequence=0; this.child=null; this.distro=null; this.starting=null; this.generation=0; }
   async distributions() {
     if (process.platform !== 'win32') return [process.env.WSL_DISTRO_NAME || 'Linux'];
     const {stdout}=await exec('wsl.exe',['--list','--quiet'],{encoding:'utf16le',windowsHide:true,timeout:20000});
@@ -15,10 +15,22 @@ class Bridge extends EventEmitter {
     const {stdout}=await exec('wsl.exe',['--distribution',distro,'--exec','wslpath','-u',path.resolve(file)],{windowsHide:true,timeout:20000});
     return stdout.trim();
   }
-  async start(settings) {
-    if(this.child && this.distro===settings.distro) return;
+  start(settings) {
+    if(this.starting){
+      if(this.startingDistro===settings.distro)return this.starting;
+      return this.starting.catch(()=>{}).then(()=>this.start(settings));
+    }
+    if(this.child && this.distro===settings.distro)return Promise.resolve();
+    this.startingDistro=settings.distro;
+    const opening=this.open(settings);
+    const pending=opening.finally(()=>{if(this.starting===pending)this.starting=null;});
+    this.starting=pending;return pending;
+  }
+  async open(settings) {
     this.close();
+    const generation=this.generation;
     const file=await this.linuxPath(path.join(this.guiRoot,'bridge/host.py'),settings.distro);
+    if(generation!==this.generation)throw new Error('Bridge connection cancelled.');
     const command=process.platform==='win32' ? 'wsl.exe' : 'python3';
     const args=process.platform==='win32' ? ['--distribution',settings.distro,'--exec','python3','-u',file] : ['-u',file];
     this.child=spawn(command,args,{stdio:['pipe','pipe','pipe'],windowsHide:true}); this.distro=settings.distro;
@@ -43,6 +55,6 @@ class Bridge extends EventEmitter {
     const id=String(++this.sequence);
     return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);reject(new Error(`${action} timed out. The runtime may still be active; reconnect before retrying.`));},timeout);this.pending.set(id,{resolve,reject,timer});this.child.stdin.write(JSON.stringify({id,action,params})+'\n');});
   }
-  close() { const old=this.child;this.child=null;old?.stdin.end();this.fail(new Error('Bridge reconfigured.')); }
+  close(reason='Bridge reconfigured.') { this.generation++; const old=this.child;this.child=null;old?.stdin.end();this.fail(new Error(reason)); }
 }
 module.exports={Bridge};

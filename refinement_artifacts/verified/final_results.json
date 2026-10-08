@@ -1,0 +1,114 @@
+{
+  "run_id": "HMC-N1N2-20261007",
+  "source_notebook": "Biomarker_N1_N2_Refinement.ipynb",
+  "checkpoint": "/content/drive/MyDrive/Sleep_Health_Profiling/models/HMC_CHECKPOINTS/best_objective1_model.keras",
+  "checkpoint_sha256": "3bf1423246d5672ce7473562079cb4e8d9aa1a578e18c1cb65e6b43e4156b226",
+  "raw_metrics": {
+    "accuracy": 0.5545191379864909,
+    "balanced_accuracy": 0.5938791165113374,
+    "macro_precision": 0.6231912349217303,
+    "macro_recall": 0.5938791165113374,
+    "macro_f1": 0.5741553020766511,
+    "weighted_f1": 0.5755445957996701,
+    "cohen_kappa": 0.4253439523231788,
+    "test_epochs": 3109,
+    "test_subjects": 4
+  },
+  "refined_metrics": {
+    "accuracy": 0.5934384046317144,
+    "balanced_accuracy": 0.6106537964471773,
+    "macro_precision": 0.6339714230729745,
+    "macro_recall": 0.6106537964471773,
+    "macro_f1": 0.5951219684303188,
+    "weighted_f1": 0.6073264430868459,
+    "cohen_kappa": 0.46466105187157947,
+    "test_epochs": 3109,
+    "test_subjects": 4
+  },
+  "changes": {
+    "unchanged": 2871,
+    "corrected": 154,
+    "degraded": 33,
+    "wrong_to_wrong": 51,
+    "changed": 238
+  },
+  "n1n2_only": {
+    "raw_accuracy": 0.5375,
+    "refined_accuracy": 0.6095238095238096,
+    "denominator": 1680,
+    "definition": "All true N1/N2 epochs, including predictions outside N1/N2"
+  },
+  "split": {
+    "train_subjects": [
+      "SN017",
+      "SN006",
+      "SN020",
+      "SN025",
+      "SN015",
+      "SN011",
+      "SN019",
+      "SN012",
+      "SN016",
+      "SN018",
+      "SN002",
+      "SN013",
+      "SN023",
+      "SN007",
+      "SN010",
+      "SN003"
+    ],
+    "val_subjects": [
+      "SN024",
+      "SN005",
+      "SN021",
+      "SN008"
+    ],
+    "test_subjects": [
+      "SN009",
+      "SN001",
+      "SN004",
+      "SN022"
+    ]
+  },
+  "domains": {
+    "Sleep_Duration": [
+      "TST_minutes"
+    ],
+    "Sleep_Continuity": [
+      "sleep_efficiency_percent",
+      "WASO_minutes",
+      "awakenings",
+      "fragmentation_index"
+    ],
+    "Sleep_Initiation": [
+      "sleep_onset_latency_min"
+    ],
+    "Sleep_Architecture": [
+      "N1_percent",
+      "N2_percent",
+      "N3_percent",
+      "REM_percent"
+    ]
+  },
+  "matrix_shape": [
+    4,
+    23
+  ],
+  "reference_shape": [
+    16,
+    23
+  ],
+  "numeric_fields": 22,
+  "deviation_fields": 21,
+  "clinical_validation": false,
+  "limitations": [
+    "HMC is a heterogeneous clinical cohort, not a healthy normative population.",
+    "Deviation levels count domains, not clinical severity or disease risk.",
+    "Stored SN001 has 190 epochs (95 minutes); whole-night interpretation is unsupported.",
+    "Epoch-index timing assumes continuity; original EDF alignment needs separate verification.",
+    "Reference architecture is estimated in sample on training recordings.",
+    "Transformer uncertainty applies to the original five-stage output, not refined classification confidence."
+  ],
+  "model_parameters": 226309,
+  "verification": "Independent Colab reproduction matched saved notebook metrics, coefficients, training counts and domain profiles."
+}

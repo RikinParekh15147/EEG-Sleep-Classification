@@ -5,34 +5,36 @@ const { EventEmitter } = require('node:events');
 const { atomicJson } = require('./store.cjs');
 const py = value => `json.loads(${JSON.stringify(JSON.stringify(value))})`;
 const ACTIVE = ['queued','preparing','running','downloading'];
+const RUNTIME_PACKAGES={numpy:'2.1.3',tensorflow:'2.21.0',keras:'3.13.2',mne:'1.13.2',matplotlib:'3.10.8',scipy:'1.16.3','scikit-learn':'1.6.1'};
 function remotePath(value) {
   if(typeof value !== 'string'||!value.startsWith('/content/')||value.length>2000||value.split('/').includes('..')||/[\0\r\n]/.test(value)) throw new Error('Choose an absolute /content/ path without parent traversal');
   return value;
 }
 function validateOptions(value={}) {
   const kind=value.kind||'inference';if(!['inference','training','preprocess'].includes(kind))throw new Error('Unknown job type');
-  const batchSize=Number(value.batchSize ?? 128),emissionWeight=Number(value.emissionWeight ?? .9),epochs=Number(value.epochs ?? 10),learningRate=Number(value.learningRate ?? .0001);
+  const batchSize=Number(value.batchSize ?? 128),epochs=Number(value.epochs ?? 10),learningRate=Number(value.learningRate ?? .0001);
   if(!Number.isInteger(batchSize)||batchSize<1||batchSize>512)throw new Error('Batch size must be an integer from 1 to 512');
-  if(!Number.isFinite(emissionWeight)||emissionWeight<0||emissionWeight>2)throw new Error('Smoothing weight must be from 0 to 2');
   if(!Number.isInteger(epochs)||epochs<1||epochs>100)throw new Error('Epoch count must be an integer from 1 to 100');
   if(!Number.isFinite(learningRate)||learningRate<.000001||learningRate>.01)throw new Error('Learning rate must be from 0.000001 to 0.01');
-  for(const key of ['smoothing','assumeContiguous','preprocessedAcknowledged'])if(value[key]!==undefined&&typeof value[key]!=='boolean')throw new Error(`Invalid ${key}`);
-  return {kind,batchSize,emissionWeight,epochs,learningRate,smoothing:value.smoothing??true,assumeContiguous:value.assumeContiguous??false,preprocessedAcknowledged:value.preprocessedAcknowledged??false};
+  for(const key of ['refinement','assumeContiguous','preprocessedAcknowledged'])if(value[key]!==undefined&&typeof value[key]!=='boolean')throw new Error(`Invalid ${key}`);
+  return {kind,batchSize,epochs,learningRate,refinement:value.refinement??true,assumeContiguous:value.assumeContiguous??false,preprocessedAcknowledged:value.preprocessedAcknowledged??false};
 }
 class Service extends EventEmitter {
-  constructor(store,bridge) { super();this.store=store;this.bridge=bridge;this.connection={state:'offline',message:'Saved results are available offline.'};this.queue=[];this.processing=false;this.logs=[];this.imports=new Map();this.prompt=null;this.authUrls=[];this.connectionBusy=false;this.timers=new Set();
+  constructor(store,bridge) { super();this.store=store;this.bridge=bridge;this.connection={state:'offline',message:'Saved results are available offline.'};this.queue=[];this.processing=false;this.logs=[];this.imports=new Map();this.prompt=null;this.authUrls=[];this.connectionBusy=false;this.closed=false;this.timers=new Set();
     bridge.on('event',e=>{if(e.event==='auth-url'){this.authUrls=[...this.authUrls.slice(-3),e.url];}if(e.event==='auth-prompt'){this.prompt={...e,urls:[...this.authUrls]};this.emit('event',this.prompt);}else if(e.event==='log'){this.log(e.message);}else{this.emit('event',e);}});
   }
-  log(message) {this.logs=[...this.logs.slice(-199),{time:new Date().toISOString(),message}];this.emit('event',{event:'log',message});}
-  state(value) {this.connection={...this.connection,...value};this.emit('event',{event:'connection',connection:this.connection});return this.connection;}
-  async command(action,params={},timeout=180000,settings=this.store.settings()) {await this.bridge.start(settings);return this.bridge.request(action,{settings,...params},timeout);}
+  log(message) {if(this.closed)return;this.logs=[...this.logs.slice(-199),{time:new Date().toISOString(),message}];this.emit('event',{event:'log',message});}
+  state(value) {if(this.closed)return this.connection;this.connection={...this.connection,...value};this.emit('event',{event:'connection',connection:this.connection});return this.connection;}
+  async command(action,params={},timeout=180000,settings=this.store.settings()) {if(this.closed)throw new Error('Application closed.');await this.bridge.start(settings);if(this.closed)throw new Error('Application closed.');return this.bridge.request(action,{settings,...params},timeout);}
   async remote(code,timeout=180,settings=this.store.settings()) {return this.command('exec',{code,timeout},(timeout+90)*1000,settings);}
   bootstrap() {return {...this.store.bootstrap(),connection:this.connection,logs:this.logs,prompt:this.prompt,desktop:true,imports:[...this.imports.values()]};}
   async discover() {
+    if(this.connectionBusy)throw new Error('A connection operation is already running');
+    this.connectionBusy=true;
     const settings=this.store.settings();this.state({state:'checking',message:'Discovering WSL and active Colab sessions…'});
     try {const distributions=await this.bridge.distributions();if(!distributions.includes(settings.distro)&&distributions.length===1)this.store.saveSettings({distro:distributions[0]});
       const found=await this.command('discover');this.state({state:'discovered',message:'Select a session or connect to create one.',...found,distributions});return {distributions,...found};
-    }catch(e){this.state({state:'error',message:e.message});throw e;}
+    }catch(e){if(this.closed)return this.connection;this.state({state:'error',message:e.message});throw e;}finally{this.connectionBusy=false;}
   }
   async connect() {
     if(this.connectionBusy)throw new Error('A connection operation is already running');
@@ -42,20 +44,38 @@ class Service extends EventEmitter {
       const found=await this.command('discover');
       if(settings.session==='eeg-sleep-studio'&&found.sessions.length){const reuse=found.sessions.find(s=>s.name==='eeg-diagnostics')||found.sessions[0];settings=this.store.saveSettings({session:reuse.name});this.log('Reusing active session '+reuse.name);}
       if(!found.sessions.some(s=>s.name===settings.session)){this.state({message:'Allocating '+settings.accelerator+' runtime…'});await this.command('create',{},660000);}
-      this.state({message:'Mounting Google Drive…'});await this.command('mount',{},660000);return await this.probe(settings);
-    }catch(e){this.state({state:'error',message:e.message});throw e;}finally{this.connectionBusy=false;}
+      this.state({message:'Mounting Google Drive…'});await this.command('mount',{},660000);
+      const result=await this.probe(settings);
+      if(Object.values(result.packages).some(version=>!version)){
+        await this.installMissingPackages(settings);return await this.probe(settings);
+      }
+      return result;
+    }catch(e){if(this.closed)return this.connection;this.state({state:'error',message:e.message});throw e;}finally{this.connectionBusy=false;}
   }
-  async mountDrive() {if(this.processing)throw new Error('Wait for the active run before mounting Drive');await this.command('mount',{},660000);return this.probe();}
+  async mountDrive() {
+    if(this.processing||this.connectionBusy)throw new Error('Wait for the current operation before mounting Drive');
+    this.connectionBusy=true;
+    try {await this.command('mount',{},660000);return await this.probe();}
+    catch(e){if(this.closed)return this.connection;this.state({state:'error',message:e.message});throw e;}
+    finally{this.connectionBusy=false;}
+  }
   async probe(settings=this.store.settings()) {
-    const result=await this.remote(`import json, os, platform, shutil, subprocess\nfrom pathlib import Path\nimport importlib.metadata as md\ns=${py(settings)}\npackages={}\nfor package in ['numpy','tensorflow','keras','mne','matplotlib']:\n try: packages[package]=md.version(package)\n except md.PackageNotFoundError: packages[package]=None\ngpu=''\nif shutil.which('nvidia-smi'):\n r=subprocess.run(['nvidia-smi','--query-gpu=name,memory.total','--format=csv,noheader'],capture_output=True,text=True,timeout=20);gpu=r.stdout.strip()\nchecks={'drive':Path('/content/drive/MyDrive').is_dir(),'checkpoint':Path(s['checkpointPath']).is_file(),'processed':Path(s['processedPath']).is_dir(),'raw':Path(s['rawPath']).is_dir()}\nprint('SLEEP_JSON:'+json.dumps({'checks':checks,'packages':packages,'gpu':gpu or 'CPU runtime','python':platform.python_version(),'session':s['session']}))`,180,settings);
+    const result=await this.remote(`import json, os, platform, shutil, subprocess\nfrom pathlib import Path\nimport importlib.metadata as md\ns=${py(settings)}\npackages={}\nfor package in ['numpy','tensorflow','keras','mne','matplotlib','scipy','scikit-learn']:\n try: packages[package]=md.version(package)\n except md.PackageNotFoundError: packages[package]=None\ngpu=''\nif shutil.which('nvidia-smi'):\n r=subprocess.run(['nvidia-smi','--query-gpu=name,memory.total','--format=csv,noheader'],capture_output=True,text=True,timeout=20);gpu=r.stdout.strip()\nchecks={'drive':Path('/content/drive/MyDrive').is_dir(),'checkpoint':Path(s['checkpointPath']).is_file(),'processed':Path(s['processedPath']).is_dir(),'raw':Path(s['rawPath']).is_dir()}\nprint('SLEEP_JSON:'+json.dumps({'checks':checks,'packages':packages,'gpu':gpu or 'CPU runtime','python':platform.python_version(),'session':s['session']}))`,180,settings);
     const missing=Object.entries(result.packages).filter(([,version])=>!version).map(([name])=>name);
     const ready=result.checks.drive&&result.checks.checkpoint&&result.checks.processed&&missing.length===0;
     return this.state({...result,state:ready?'ready':'needs-setup',message:ready?'Connected. Runtime, Drive, checkpoint and packages are ready.':missing.length?'Install missing runtime packages: '+missing.join(', '):'Check the Drive, model and dataset paths below.'});
   }
+  async installMissingPackages(settings=this.store.settings()) {
+    const missing=Object.entries(this.connection.packages||{}).filter(([,version])=>!version).map(([name])=>name);
+    this.state({state:'checking',message:'Installing missing runtime packages'+(missing.length?': '+missing.join(', '):'')+'…'});
+    const result=await this.remote(`import json, sys, subprocess\nimport importlib.metadata as md\nrequired=${py(RUNTIME_PACKAGES)}\nmissing=[]\nfor p,v in required.items():\n try:md.version(p)\n except md.PackageNotFoundError:missing.append(p+'=='+v)\nif missing:subprocess.run([sys.executable,'-m','pip','install',*missing],check=True)\nprint('SLEEP_JSON:'+json.dumps({'installed':missing}))`,900,settings);
+    this.log(result.installed.length?'Installed '+result.installed.join(', '):'Runtime packages are already installed.');
+    return result;
+  }
   async prepareRuntime() {
     if(this.processing||this.connectionBusy)throw new Error('Wait for the current operation before installing runtime packages');
-    this.state({state:'checking',message:'Installing missing runtime packages…'});
-    try {await this.remote(`import json, sys, subprocess\nimport importlib.metadata as md\nrequired={'numpy':'2.1.3','tensorflow':'2.21.0','keras':'3.13.2','mne':'1.13.2','matplotlib':'3.10.8'}\nmissing=[]\nfor p,v in required.items():\n try:md.version(p)\n except md.PackageNotFoundError:missing.append(p+'=='+v)\nif missing:subprocess.run([sys.executable,'-m','pip','install',*missing],check=True)\nprint('SLEEP_JSON:'+json.dumps({'installed':missing}))`,900);return this.probe();}catch(e){this.state({state:'error',message:e.message});throw e;}
+    this.connectionBusy=true;
+    try {await this.installMissingPackages();return await this.probe();}catch(e){if(this.closed)return this.connection;this.state({state:'error',message:e.message});throw e;}finally{this.connectionBusy=false;}
   }
   async browseDrive(folder) {
     folder=remotePath(folder||this.store.settings().processedPath);
@@ -104,12 +124,15 @@ class Service extends EventEmitter {
       if(values.some(v=>!Array.isArray(v))||!split.train.length||!split.val.length||values.flat().some(id=>!all.includes(id))||new Set(values.flat()).size!==values.flat().length)throw new Error('Choose valid nonoverlapping training, validation and test recordings');
     }
     settings.testIds=dataset.split_subject_ids?.test||[];
-    const transition=this.store.bootstrap().transition;const matrix=this.store.read(this.store.baseline,'transition_matrix.csv',[]).map(row=>['Wake','N1','N2','N3','REM'].map(n=>row[n]));
+    const transition=this.store.bootstrap().transition;const matrix=this.store.read(this.store.legacy,'transition_matrix.csv',[]).map(row=>['Wake','N1','N2','N3','REM'].map(n=>row[n]));
     const id='run-'+new Date().toISOString().replace(/[-:.TZ]/g,'')+'-'+crypto.randomBytes(3).toString('hex');
     const trained=this.store.runs().find(run=>run.kind==='training'&&run.status==='completed'&&run.result?.checkpoint===settings.checkpointPath);
     const selectedTransition=trained?this.store.read(this.store.directory(trained.id),'transition_config.json',null):{...transition,matrix};
     if(!selectedTransition||!selectedTransition.matrix)throw new Error('The selected checkpoint has no verified training transition priors');
-    const config={id,kind:valid.kind,settings,inputs,transition:selectedTransition,split};
+    const refinement=this.store.read(this.store.baseline,'refinement_model.json',null);
+    const reference=this.store.read(this.store.baseline,'reference_stats.json',[]);
+    settings.projectHashes=Object.fromEntries(this.store.read(this.store.baseline,'data_manifest.json',[]).map(r=>[r.subject_id,r.sha256]));
+    const config={id,kind:valid.kind,settings,inputs,transition:selectedTransition,split,refinement,reference};
     const manifest={id,name:options.name?.slice(0,100)|| (valid.kind==='training'?'Fast SCFormer-U training':valid.kind==='preprocess'?'EDF preprocessing':'Sleep analysis · '+inputs.map(i=>i.id).join(', ')),kind:valid.kind,status:'queued',createdAt:new Date().toISOString(),settings,recordings:inputs.map(i=>i.id),step:'Queued',progress:0};
     this.store.saveRun(manifest);atomicJson(path.join(this.store.runsRoot,id,'config.json'),config);this.queue.push(id);this.emit('event',{event:'run',run:manifest});this.processQueue();return manifest;
   }
@@ -125,7 +148,7 @@ class Service extends EventEmitter {
     this.update(id,{status:'preparing',step:'Preparing isolated worker',progress:1});
     const remoteRoot='/content/eeg_sleep_studio/'+id;
     await this.remote(`import json\nfrom pathlib import Path\np=Path(${JSON.stringify(remoteRoot)});p.mkdir(parents=True,exist_ok=True)\nprint('SLEEP_JSON:'+json.dumps({'ok':True}))`,180,settings);
-    for(const filename of ['core.py','worker.py']) {
+    for(const filename of ['core.py','refinement.py','worker.py']) {
       const local=await this.bridge.linuxPath(path.join(this.bridge.guiRoot,'pipeline',filename),settings.distro);
       await this.command('upload',{local,remote:remoteRoot+'/'+filename},960000,settings);
     }
@@ -195,6 +218,6 @@ class Service extends EventEmitter {
     const index=Number(epoch);if(!Number.isInteger(index)||index<0)throw new Error('Invalid epoch');
     return this.remote(`import json, numpy as np\nfrom pathlib import Path\nsid=${JSON.stringify(recording)}\np=Path(${JSON.stringify(run.remoteRoot)})\nfile=p/'artifacts'/(sid+'_corrected.npz')\nif not file.exists():file=Path(${JSON.stringify(input.path)})\nif file.suffix.lower()!='.npz':raise ValueError('Only the first EDF epoch preview is cached; use the exported EDF to inspect other epochs')\nwith np.load(file,allow_pickle=False) as d:\n x=d['X'][${index}]\nprint('SLEEP_JSON:'+json.dumps({'channels':['EEG F4-M1','EEG C4-M1','EEG O2-M1','EEG C3-M2'],'recording_id':sid,'epoch_index':${index},'processed':x[:,::3].tolist(),'processed_sampling_hz':100/3,'processed_unit':'normalized amplitude'}))`,120,run.settings);
   }
-  close() {for(const t of this.timers)clearTimeout(t);this.bridge.close();}
+  close() {this.closed=true;for(const t of this.timers)clearTimeout(t);this.bridge.close('Application closed.');}
 }
 module.exports={Service,validateOptions,remotePath,py,ACTIVE};

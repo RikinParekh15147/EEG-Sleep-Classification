@@ -1,0 +1,34 @@
+[
+  {
+    "subject": "SN009",
+    "baseline_accuracy": "0.612653",
+    "refined_accuracy": "0.644839",
+    "accuracy_change": "0.032186",
+    "baseline_macro_f1": "0.616853",
+    "refined_macro_f1": "0.639365"
+  },
+  {
+    "subject": "SN001",
+    "baseline_accuracy": "0.468421",
+    "refined_accuracy": "0.484211",
+    "accuracy_change": "0.015789",
+    "baseline_macro_f1": "0.390344",
+    "refined_macro_f1": "0.401769"
+  },
+  {
+    "subject": "SN004",
+    "baseline_accuracy": "0.567913",
+    "refined_accuracy": "0.640748",
+    "accuracy_change": "0.072835",
+    "baseline_macro_f1": "0.595188",
+    "refined_macro_f1": "0.627846"
+  },
+  {
+    "subject": "SN022",
+    "baseline_accuracy": "0.504990",
+    "refined_accuracy": "0.519960",
+    "accuracy_change": "0.014970",
+    "baseline_macro_f1": "0.551397",
+    "refined_macro_f1": "0.559362"
+  }
+]

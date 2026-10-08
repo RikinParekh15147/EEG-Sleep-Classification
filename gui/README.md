@@ -1,12 +1,6 @@
 # Sleep Studio
 
-A Windows Electron desktop app for the existing Fast SCFormer-U EEG sleep-stage project. All application source lives in `gui/`. The original notebook, checkpoint, verified evaluation, and presentation artifacts are preserved.
-
-![Sleep Studio overview with actual verified results](docs/overview.png)
-
-## Start from Windows Terminal
-
-Use a **PowerShell or Command Prompt profile**, with Windows Node.js 22.12+ (LTS recommended):
+Windows Electron workspace for the current N1/N2 spectral refinement and descriptive sleep-health reference pipeline.
 
 ```powershell
 cd "C:\Users\Rikin Parekh\AntiGravity\EEG-Sleep-Classification\gui"
@@ -14,97 +8,40 @@ npm install
 npm start
 ```
 
-`start.bat` is the double-click alternative. The launcher builds the frontend before opening Electron. Google sign-in and Drive consent, when required, are handled by app prompts and your Windows browser.
+`start.bat` also launches the app. Windows runs Electron; Ubuntu WSL runs the existing Colab CLI, normally `~/.venvs/colab-cli/bin/colab`. Use Connection & settings to discover or connect a runtime, mount Drive and verify the checkpoint/dataset paths. Package checks now include SciPy and scikit-learn.
 
-Windows launches Electron natively. Colab operations run through `wsl.exe` in the selected Linux distribution; the default is Ubuntu. In WSL the app discovers the existing CLI at `~/.venvs/colab-cli/bin/colab`, `~/.local/bin/colab`, or on PATH. A custom CLI path is available in settings.
+Offline Overview and Results display the independently reproduced `HMC-N1N2-20261007` run: 3,109 stored test epochs, 55.45% raw accuracy, 59.34% refined accuracy. Choose SN001, SN004, SN009 or SN022 in Results. The Sleep profile tab shows four domains, the overall deviation level, architecture, all nine spectral features, z-scores and reference P10/P90 values.
 
-**Switching between Windows and WSL:** dependencies contain platform-specific binaries. The launcher checks the platform and repairs the Electron/esbuild installation when necessary. Prefer Windows for normal use. `npm run dev` opens the development app with Vite; `npm run build` creates the production frontend.
+## Running an analysis
 
-## First analysis
+1. In Connection & settings, connect your existing Colab runtime and mounted project Drive. Connecting automatically installs missing runtime packages (including MNE), retains existing versions, and checks the checkpoint/dataset paths. Wait for “Your runtime is ready” before running. “Install missing packages” retries package setup if needed.
+2. Data & Run accepts project NPZ examples, Drive files or Windows EDF/NPZ imports.
+3. N1/N2 spectral refinement defaults on. Its fitted scaler/coefficients and training reference are checkpoint-specific and are uploaded with each isolated run. A different checkpoint needs its own refiner; disable refinement for raw inference with that checkpoint.
+4. Project examples use the notebook’s stored NPZ sequences, with an explicit continuity assumption displayed in the interface. Project SHA256 hashes are checked against the audit. They do not silently reconstruct SN001 into a different experiment.
+5. Imported NPZs need confirmation of channel order/preprocessing and a continuity assumption if timestamps are absent. Unknown timing or gaps makes SOL/WASO/fragmentation unavailable; incomplete domains produce an unavailable overall profile.
+6. Results include hypnograms, original evidential probabilities/uncertainty, raw/refined evaluations, descriptive profiles, artifacts and PDF/JSON/CSV/ZIP exports.
 
-1. Open **Connection & settings**. Choose the WSL distribution and click **Discover sessions** to reuse your current named runtime. Or keep a new session name and click **Connect Colab & Drive**.
-2. If Google asks for sign-in, open the authorization link and paste the displayed code into the app. For Drive consent, grant access and click Continue. Existing valid credentials are reused.
-3. Check the Drive dataset and checkpoint paths. If packages are missing, click **Install missing packages**. The app checks NumPy, TensorFlow, Keras, MNE, and Matplotlib.
-4. Open **Data & Run**, select SN009, and click **Run analysis**. Run History shows progress. Open the completed results to inspect the hypnogram, probabilities, uncertainty, evaluations, profile, and artifacts.
-5. Export a PDF, JSON, CSV/image artifact, or the complete result bundle.
+The Transformer is retained. Ground truth is used only for evaluation and training subset construction; test routing depends only on the predicted N1/N2 label. Nine EEG features use Delta 0.5-4, Theta 4-8, Alpha 8-12, Sigma 12-16, Beta 16-30 Hz, plus four band/Delta ratios. Welch uses 400 samples and 200 overlap at 100 Hz. Relative powers use 0.5-30 Hz total power, average channel powers first, and include all epochs in recording-level spectral means.
 
-## Available workflows
+## Architecture and profiling
 
-- **Offline browsing:** the verified HMC-PPT-20261007-01 artifacts populate Overview, Results, Model Details and Dataset Details. Opening the app does not allocate a Colab runtime.
-- **Project examples:** SN009, SN001, SN004 and SN022 by default, with training/validation recordings accessible through the partition filter. A batch is processed sequentially in one job.
-- **Windows imports:** select EDFs and optional matching `_sleepscoring.edf` files, or compatible NPZ files. Imports are uploaded only when starting an analysis.
-- **Drive browsing:** navigate mounted MyDrive folders and select EDF/NPZ inputs with optional scoring files.
-- **Training:** select explicit, nonoverlapping training/validation/test recording IDs and train the existing architecture into a new experiment. A completed new checkpoint becomes selectable in Data & Run. This does not overwrite the original model or split.
-- **Preprocessing:** generate normalized NPZs from selected project EDF/scoring pairs. Output files are contained in the run’s artifacts and ZIP bundle.
-- **History and recovery:** each run stores configuration, hashes, outputs and state. A disconnected or interrupted run can be recovered if its remote runtime/files are still present. The app does not restart computations automatically.
-- **Cancellation:** sends SIGTERM only after verifying the remote worker identity. Completion/cancellation is acknowledged by the remote worker. Training cancels at batch boundaries; EDF loading/filtering may take time to reach a cancellation check.
+TST excludes Wake. Efficiency is TST / evaluated recording duration. N1/N2/N3/REM percentages use TST. SOL starts at the evaluated sequence origin. WASO includes terminal Wake after sleep onset; REM latency starts at sleep onset. Awakenings count non-Wake → Wake. Fragmentation counts all stage transitions per TST hour and is project-defined.
 
-## Scientific behavior
+Reference mean, sample SD (ddof=1), median, P10 and P90 come from 16 training recordings only. Bounds are inclusive. 0/1/2/3–4 deviated domains give Within Reference/Mild/Moderate/High Deviation. EEG features, REM latency and total transition count are available for comparison but are not independently counted as extra domain flags.
 
-Input shape is `(epochs, 4, 3000)` with channels in this order:
+HMC is a heterogeneous clinical population, not a healthy normative cohort. LOW/NORMAL/HIGH indicate dataset-relative intervals. Mild/Moderate/High Deviation count deviated domains; they are not validated clinical severity, disease-risk predictions, or diagnoses. The stored SN001 input covers 190 epochs (95 minutes), so its profile describes a segment. NPZ timing assumes contiguous epochs; whole-night and lights-out timing are not independently established.
 
-1. EEG F4-M1
-2. EEG C4-M1
-3. EEG O2-M1
-4. EEG C3-M2
+There is no explicit spindle detection, dedicated formal SWA metric, spectral edge frequency, disease predictor, healthy normative cohort, or true repeated-night personalization. Model uncertainty is a different concept from reference deviation and is not recalibrated by N1/N2 label refinement.
 
-EDF preprocessing uses a 50 Hz notch, 0.3–35 Hz bandpass, 100 Hz resampling, complete 30-second epochs, and per-epoch/per-channel normalization. The evidential model yields `alpha = evidence + 1`, probabilities `alpha / sum(alpha)`, and uncertainty `5 / sum(alpha)`.
+## Validation and provenance
 
-Soft-Viterbi defaults to emission weight 0.9 and training-only transition priors. It resets at recording boundaries and timestamp gaps. NPZ inputs without timestamp provenance require an explicit continuity assumption; otherwise smoothing, WASO, SFI and risk categories are unavailable. Imported NPZs must be confirmed as using the project channel order and preprocessing.
-
-The saved SN001 NPZ has an audited label-alignment problem (190 epochs). Project evaluation reconstructs the complete 854-epoch test input from its original EDF, preserving the original. Training/validation input mismatches stop for inspection.
-
-Accuracy and confusion matrices require aligned ground-truth labels. Profile efficiency and stage percentages use **evaluated-epoch duration**, not verified time in bed. SFI counts coarse stage transitions per scored-sleep hour, excludes gaps, and is not EEG micro-arousal scoring. Categories are research heuristics; probabilities are not separately calibrated. A recording with zero scored sleep is marked Unclassified.
-
-The proposed multistage model is informational future research, not an implemented selectable model.
-
-## Data and credentials
-
-- Windows app data: `%APPDATA%\Sleep Studio\` (Electron userData; exact location follows the app name). Contains settings, run metadata, artifacts, and downloaded ZIPs.
-- Linux bridge session state: `~/.local/share/eeg-sleep-studio/sessions.json`, with restrictive permissions. Existing session state from the previous `/tmp/eeg-colab-checks` workflow is imported if available.
-- OAuth credentials stay in the CLI’s existing WSL configuration. Tokens and authorization codes are not copied to the repo or reports.
-- Remote workers run under `/content/eeg_sleep_studio/<run-id>/`. Colab `/content` is temporary.
-- If enabled, completed bundles also go to `MyDrive/Sleep_Health_Profiling/gui_runs/<run-id>/results.zip`.
-- Closing the app does not stop a detached remote worker. Use recovery to check its status later. Closing or expiring the Colab runtime can permanently remove temporary files.
-
-## Verification
-
-```bash
+```powershell
 npm run build
 npm test
-python3 -m unittest discover -s tests -p 'test_*.py'
 npm run test:ui
 npm run test:desktop
 ```
 
-On Windows, UI tests use installed Chrome when available; otherwise run `npx playwright install chromium` first. See [the recorded validation](docs/validation.md) for completed live checks and their limits.
+Run Python unittest discovery under a Python environment. `tests/test_pipeline.py` verifies archived Viterbi evidence; `tests/test_refinement.py` verifies the current architecture, exact fitted-refiner predictions, boundaries and missing-data behavior. The active baseline is `refinement_artifacts/verified`; `ppt_artifacts` contains the previous evaluation.
 
-Python numerical tests use only the standard library and compare every verified epoch’s probability/uncertainty, all four smoothed sequences, aggregate metrics, calibration measures, and all 12 research biomarker profiles. Additional tests cover data gaps, missing continuity, path traversal, report escaping and PTY authorization prompts.
-
-For an explicit live check of an **existing** Colab session (no allocation, training, or notebook execution):
-
-```bash
-node scripts/smoke-colab.cjs
-node scripts/smoke-colab.cjs --run-example
-```
-
-Default test session: `eeg-diagnostics`; override with `SLEEP_TEST_SESSION`. The explicit `--connect` option creates/reuses an isolated CPU test session; mounting Drive still requires Google consent. `node scripts/smoke-worker.cjs` verifies the archived model and actual corrected SN001 input in that isolated session without mounting Drive. The `--run-example` command runs SN009 through the real isolated worker and downloads its results under ignored `gui/.runtime/live-check/`.
-
-For a read-only browser preview of the real project data:
-
-```bash
-npm run build
-npm run preview
-```
-
-Open `http://127.0.0.1:4173`. Colab execution and desktop exports are intentionally available only in Electron.
-
-## Troubleshooting
-
-- **Node is not found:** install Windows Node.js LTS, then open a new Windows Terminal. Do not use the WSL terminal profile for the native Windows app.
-- **Wrong WSL distribution:** enter the distribution containing your working CLI and Google credentials, then reconnect.
-- **CLI missing:** use its absolute Linux executable path in settings. If WSL is not installed, install it through Windows before connecting; offline result browsing still works.
-- **Drive authorization fails:** make sure the browser account matches the CLI account. Multi-account Google consent can require signing into the correct primary account. Reopen consent from the app and retry mounting Drive.
-- **Missing runtime packages:** use Install missing packages. Existing packages are left installed; their versions appear in the diagnostics and are saved with inference results.
-- **Runtime unavailable:** choose an available accelerator or CPU and reconnect. The app does not silently allocate an expensive alternative.
-- **Run interrupted:** recover it from Run History. If `/content` disappeared, rerun from the original input; already downloaded local results remain accessible.
+Each run stores its settings, input hashes and results under app data. OAuth credentials stay in the WSL CLI configuration. Every worker runs in its own `/content/eeg_sleep_studio/<run-id>` folder. History supports cancellation and recovery. Training writes a separate checkpoint and retains the existing architecture; it does not automatically create a compatible spectral refiner for the new checkpoint.

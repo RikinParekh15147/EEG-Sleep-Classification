@@ -1,0 +1,90 @@
+{
+  "updated": "2026-10-08",
+  "run_id": "HMC-N1N2-20261007",
+  "deliverables": [
+    {
+      "file": "final_sleep_stage_project_presentation.pptx",
+      "sha256": "b63f9138849f63792373ffaf36aa5622c4fe47a9e4343b1cb1ad248f2bfe6feb",
+      "bytes": 585201,
+      "pages_or_slides": 41
+    },
+    {
+      "file": "final_sleep_stage_project_presentation.pdf",
+      "sha256": "3eaa2a259d4bda43c5d9df236477c7a11466e308cd8da2d9d04ecdca414aeb11",
+      "bytes": 670752,
+      "pages_or_slides": 41
+    },
+    {
+      "file": "sleep_stage_project_12_slides.pptx",
+      "sha256": "fb7466d03982408260b6eb3308192ab727a91d6ba611e82ecb413e7dd46e4380",
+      "bytes": 220606,
+      "pages_or_slides": 12
+    },
+    {
+      "file": "sleep_stage_project_12_slides.pdf",
+      "sha256": "d78331d26127a0b7e65b2f1ba1e81ee44d8fad6c22a3861062768426c66fd290",
+      "bytes": 290586,
+      "pages_or_slides": 12
+    },
+    {
+      "file": "mid.original_backup.pptx",
+      "sha256": "0050e12e81f4b310a803243aea50f732e18271765b25ee4be123f2707f63d01d",
+      "bytes": 585549,
+      "pages_or_slides": 41
+    },
+    {
+      "file": "mid.original_backup.pdf",
+      "sha256": "a8fe79e0fe1dcc163fbb1efb03e58b5da7a4535bd749aea82cdb858a98014307",
+      "bytes": 670752,
+      "pages_or_slides": 41
+    }
+  ],
+  "rendered_slides": 94,
+  "measured_text_boxes": 507,
+  "measured_text_overflows": 0,
+  "native_application": "Microsoft PowerPoint 2024",
+  "pdf_render_checks": [
+    "detailed-reference",
+    "short-reference",
+    "third-profiles",
+    "gui-report"
+  ],
+  "numerical_validation": {
+    "passed": true,
+    "checks": [
+      "All 3,109 evidential probability and uncertainty formulas checked against source float32 output",
+      "raw confusion matrix and aggregate metrics independently recomputed",
+      "refined confusion matrix and aggregate metrics independently recomputed",
+      "SN009 exact N1/N2 sequence, all architecture values, domains and profile reproduced by desktop code",
+      "SN001 exact N1/N2 sequence, all architecture values, domains and profile reproduced by desktop code",
+      "SN004 exact N1/N2 sequence, all architecture values, domains and profile reproduced by desktop code",
+      "SN022 exact N1/N2 sequence, all architecture values, domains and profile reproduced by desktop code",
+      "All 22 complete reference rows and nine coefficients match saved notebook display precision",
+      "Reference means, sample SDs, medians and linear P10/P90 independently recomputed for all 22 fields"
+    ],
+    "epochs_checked": 3109,
+    "profile_sources_checked": 12,
+    "matrix_shape": [
+      4,
+      23
+    ],
+    "reference_shape": [
+      16,
+      23
+    ],
+    "numeric_fields": 22,
+    "deviation_fields": 21,
+    "saved_notebook_metrics_match": true
+  },
+  "gui_checks": {
+    "production_build": "passed",
+    "backend_tests": 9,
+    "python_tests_in_ubuntu": 14,
+    "browser_tests": 4,
+    "native_electron": "passed",
+    "native_wsl_bridge": "passed",
+    "native_pdf_export": "passed",
+    "live_sn009_worker_epochs": 901,
+    "live_input_hash_check": "passed"
+  }
+}

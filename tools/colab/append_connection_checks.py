@@ -5,7 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 
-path = Path('Original_Prev_MP_HMC_FINAL_edit.ipynb')
+path = Path(__file__).resolve().parents[2] / 'notebooks' / 'archive' / 'Original_Prev_MP_HMC_FINAL_edit.ipynb'
 backup = path.with_suffix('.before_connection_checks.ipynb')
 original_bytes = path.read_bytes()
 original = json.loads(original_bytes)

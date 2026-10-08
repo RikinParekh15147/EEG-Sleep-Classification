@@ -1,0 +1,45 @@
+The retained Fast SCFormer-U evidential Transformer classifies four-channel, 100 Hz EEG in 30-second epochs. A StandardScaler and balanced logistic regression refine only predicted N1/N2 epochs using nine spectral features. Architecture and EEG features form recording-level profiles compared with a 16-recording HMC training reference using z-scores and empirical P10/P90 boundaries. Four architecture domains produce descriptive overall deviation levels.
+
+{
+  "run_id": "HMC-N1N2-20261007",
+  "metrics": {
+    "run_id": "HMC-N1N2-20261007",
+    "raw": {
+      "accuracy": 0.5545191379864909,
+      "balanced_accuracy": 0.5938791165113374,
+      "macro_precision": 0.6231912349217303,
+      "macro_recall": 0.5938791165113374,
+      "macro_f1": 0.5741553020766511,
+      "weighted_f1": 0.5755445957996701,
+      "cohen_kappa": 0.4253439523231788,
+      "test_epochs": 3109,
+      "test_subjects": 4
+    },
+    "refined": {
+      "accuracy": 0.5934384046317144,
+      "balanced_accuracy": 0.6106537964471773,
+      "macro_precision": 0.6339714230729745,
+      "macro_recall": 0.6106537964471773,
+      "macro_f1": 0.5951219684303188,
+      "weighted_f1": 0.6073264430868459,
+      "cohen_kappa": 0.46466105187157947,
+      "test_epochs": 3109,
+      "test_subjects": 4
+    }
+  },
+  "changes": {
+    "unchanged": 2871,
+    "corrected": 154,
+    "degraded": 33,
+    "wrong_to_wrong": 51,
+    "changed": 238
+  },
+  "n1n2_only": {
+    "raw_accuracy": 0.5375,
+    "refined_accuracy": 0.6095238095238096,
+    "denominator": 1680,
+    "definition": "All true N1/N2 epochs, including predictions outside N1/N2"
+  }
+}
+
+HMC is a heterogeneous clinical population, not a healthy normative cohort. LOW/NORMAL/HIGH indicate dataset-relative intervals. Mild/Moderate/High Deviation count deviated domains; they are not validated clinical severity, disease-risk predictions, or diagnoses. The stored SN001 input covers 190 epochs (95 minutes), so its profile describes a segment. NPZ timing assumes contiguous epochs; whole-night and lights-out timing are not independently established.

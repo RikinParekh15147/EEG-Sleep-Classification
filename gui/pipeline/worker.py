@@ -12,7 +12,8 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-from core import CHANNELS, STAGES, biomarkers, boundaries, calibration, classification, evidence_distribution, risk_profile, viterbi
+from refinement import FEATURES, spectral_features, refine_predictions, sleep_architecture, deviation_profile
+from core import CHANNELS, STAGES, boundaries, calibration, classification, evidence_distribution
 
 CANCELLED=False
 
@@ -100,7 +101,7 @@ def load_input(item,settings,output):
     timing_known=times is not None or settings.get('assumeContiguous',False)
     repaired=False
     original_epochs=len(x)
-    if item.get('source')=='project':
+    if item.get('source')=='project' and settings.get('reconstructFullEDF',False):
         signal_path,score=find_edf(settings['rawPath'],sid)
         if not signal_path or not score:raise ValueError('Project verification requires original EDF and scoring files for '+sid)
         import mne
@@ -116,13 +117,17 @@ def load_input(item,settings,output):
             repaired=True;corrected=output/(sid+'_corrected.npz');np.savez_compressed(corrected,X=x,Y=y,timestamps=times)
             metadata.update(extra);metadata.update({'repair':'Reconstructed complete scored epochs from original EDF; original file preserved','original_epochs':original_epochs,'corrected_epochs':len(x),'corrected_sha256':sha(corrected)})
         timing_known=True
+    elif item.get('source')=='project':
+        expected=settings.get('projectHashes',{}).get(sid)
+        if expected and metadata['sha256']!=expected:raise ValueError('Project input changed since refinement audit: '+sid)
+        timing_known=settings.get('assumeContiguous',False)
     elif not settings.get('preprocessedAcknowledged',False):
         raise ValueError('Confirm that imported NPZ data uses the required channel order and project preprocessing')
     if times is None:times=[i*30. for i in range(len(x))]
     boundaries(times,len(x))
     if not repaired:preview={'channels':CHANNELS,'recording_id':sid,'epoch_index':0,'start_seconds':times[0],
       'processed':x[0,:,::3].tolist(),'processed_sampling_hz':100/3,'processed_unit':'normalized amplitude'}
-    metadata.update({'epochs':len(x),'timing_known':timing_known,'timing':'verified project EDF alignment' if item.get('source')=='project' else 'NPZ timestamps' if timing_known and not settings.get('assumeContiguous') else 'user assumes contiguous 30s epochs' if timing_known else 'relative index only; continuity unverified',
+    metadata.update({'epochs':len(x),'timing_known':timing_known,'timing':'stored notebook sequence; assumed contiguous epochs' if item.get('source')=='project' else 'NPZ timestamps' if timing_known and not settings.get('assumeContiguous') else 'user assumes contiguous 30s epochs' if timing_known else 'relative index only; continuity unverified',
       'labels_available':y is not None,'gap_boundaries':len(boundaries(times,len(x)))-2,'input_shape':list(x.shape)})
     return x,y,times,preview,metadata,timing_known
 
@@ -137,52 +142,64 @@ def inference(config,out,progress):
     if model.input_shape!=(None,4,3000) or model.output_shape!=(None,5) or model.layers[-1].get_config().get('activation')!='softplus':raise ValueError('Checkpoint must be a four-channel, five-stage evidential model')
     checkpoint_hash=sha(checkpoint)
     dump(out/'checkpoint_metadata.json',{'path':str(checkpoint),'sha256':checkpoint_hash,'parameters':model.count_params()})
-    dump(out/'evaluation_environment.json',{'python':sys.version,'versions':{p:md.version(p) for p in ['numpy','tensorflow','keras','mne']},'gpu':[str(x) for x in tf.config.list_physical_devices('GPU')]})
+    versions={}
+    for package in ['numpy','tensorflow','keras','scipy','scikit-learn','mne']:
+        try:versions[package]=md.version(package)
+        except md.PackageNotFoundError:versions[package]=None
+    dump(out/'evaluation_environment.json',{'python':sys.version,'versions':versions,'gpu':[str(x) for x in tf.config.list_physical_devices('GPU')]})
+    refinement=config.get('refinement');reference=config.get('reference',[])
+    if settings.get('refinement',True) and (not refinement or refinement.get('checkpoint_sha256')!=checkpoint_hash):
+        raise ValueError('This checkpoint needs its own fitted N1/N2 refinement. Disable refinement for raw inference.')
     rows=[];profiles=[];inputs=[];per_recording=[];signals={};evidence_rows=[];bounds_all=[]
-    initial=config['transition']['initial_probabilities'];transition=config['transition']['matrix']
     for index,item in enumerate(config['inputs']):
         check_cancel();sid=item['id'];progress('Validating '+sid,8+index/len(config['inputs'])*70)
         x,y,times,preview,metadata,timing_known=load_input(item,settings,out);inputs.append(metadata);signals[sid]=preview
         evidence=[];batch=settings.get('batchSize',128)
         for start in range(0,len(x),batch):
             check_cancel()
-            values=model(x[start:start+batch],training=False).numpy()
+            xb=x[start:start+batch]
+            xb=((xb-xb.mean(axis=2,keepdims=True))/(xb.std(axis=2,keepdims=True)+1e-6)).astype(np.float32)
+            values=model(xb,training=False).numpy()
             if not np.isfinite(values).all() or np.any(values<0):raise ValueError('Model produced invalid evidence')
             evidence.extend(values.astype(float).tolist())
             progress('Predicting '+sid,10+(index+(start+batch)/len(x))/len(config['inputs'])*68)
         distributions=[evidence_distribution(e) for e in evidence];probabilities=[d[0] for d in distributions]
         rawpred=[max(range(5),key=lambda j:p[j]) for p in probabilities]
-        smoothing=settings.get('smoothing',True) and timing_known
-        smooth=viterbi(probabilities,initial,transition,settings.get('emissionWeight',0.9),times) if smoothing else None
+        feature_batches=[]
+        for start in range(0,len(x),batch):
+            check_cancel();feature_batches.extend(spectral_features(x[start:start+batch]).tolist())
+        refined=refine_predictions(rawpred,feature_batches,refinement) if settings.get('refinement',True) else None
         true=y.astype(int).tolist() if y is not None else None
         for i,p in enumerate(probabilities):
             rows.append({'subject_id':sid,'recording_id':sid,'epoch_index':i,'timestamp_seconds':times[i],
               'true_label':true[i] if true is not None else None,'raw_prediction':rawpred[i],
-              'soft_viterbi_prediction':smooth[i] if smooth is not None else None,'uncertainty':distributions[i][1],'confidence':max(p),
+              'refined_prediction':refined[i] if refined is not None else None,**dict(zip(FEATURES,feature_batches[i])),'uncertainty':distributions[i][1],'confidence':max(p),
               **{f'prob_{name}':p[j] for j,name in enumerate(STAGES)},**{f'evidence_{name}':evidence[i][j] for j,name in enumerate(STAGES)},
               **{f'alpha_{name}':distributions[i][2][j] for j,name in enumerate(STAGES)}})
-        for source,stages in [('ground_truth',true),('raw',rawpred),('soft_viterbi',smooth)]:
+        for source,stages in [('ground_truth',true),('raw',rawpred),('refined',refined)]:
             if stages is None:continue
-            values=biomarkers(stages,times,timing_known);category,reasons=risk_profile(values)
-            profiles.append({'subject_id':sid,'source':source,**values,'risk_category':category,'reasons':reasons,
-              'complete_contiguous_record':timing_known and len(boundaries(times,len(x)))==2,
-              'interpretation':'research evaluated-epoch proxy; time in bed not directly verified; '+metadata['timing']})
+            values=sleep_architecture(stages,times,timing_known)
+            values.update(dict(zip(FEATURES,np.mean(feature_batches,axis=0).tolist())))
+            profile=deviation_profile(values,reference) if reference and refinement and refinement.get('checkpoint_sha256')==checkpoint_hash else {'sleep_health_deviation_profile':'Unavailable','deviations':{}}
+            profiles.append({'subject_id':sid,'source':source,**values,**profile,
+              'scope':'evaluated epochs; '+metadata['timing'],
+              'complete_contiguous_record':timing_known and len(boundaries(times,len(x)))==2})
         evidence_rows.extend(evidence)
-        result={'subject_id':sid,'epochs':len(x),'gaps':len(boundaries(times,len(x)))-2,'timing_known':timing_known,'smoothed':smoothing,'labels_available':true is not None}
+        result={'subject_id':sid,'epochs':len(x),'gaps':len(boundaries(times,len(x)))-2,'timing_known':timing_known,'refinement_applied':refined is not None,'labels_available':true is not None}
         if true is not None:
             result['raw_accuracy']=classification(true,rawpred)[0]['accuracy']
-            if smooth is not None:result['smoothed_accuracy']=classification(true,smooth)[0]['accuracy']
+            if refined is not None:result['refined_accuracy']=classification(true,refined)[0]['accuracy']
         per_recording.append(result);del x
     check_cancel();progress('Calculating evaluation and sleep profiles',82)
-    write_csv(out/'test_epoch_predictions.csv',rows);write_csv(out/'subject_biomarkers.csv',profiles)
-    write_csv(out/'subject_risk_profiles.csv',[p for p in profiles if p['source']=='soft_viterbi'])
+    write_csv(out/'test_epoch_predictions.csv',rows);write_csv(out/'subject_biomarkers.csv',[{k:v for k,v in p.items() if k!='deviations'} for p in profiles]);dump(out/'subject_profiles.json',profiles)
+    dump(out/'reference_stats.json',reference);dump(out/'refinement_model.json',refinement)
     np.save(out/'test_evidence.npy',np.asarray(evidence_rows))
     np.save(out/'test_dirichlet_alpha.npy',np.asarray(evidence_rows)+1)
     np.save(out/'test_probabilities.npy',np.asarray([[r['prob_'+n] for n in STAGES] for r in rows]))
     dump(out/'signals.json',signals);dump(out/'data_manifest.json',inputs)
     metrics={'run_id':config['id']};labeled=[r for r in rows if r['true_label'] is not None]
     if labeled:
-        for condition,column,prefix in [('raw','raw_prediction',''),('soft_viterbi','soft_viterbi_prediction','smoothed_')]:
+        for condition,column,prefix in [('raw','raw_prediction',''),('refined','refined_prediction','refined_')]:
             subset=[r for r in labeled if r[column] is not None]
             if not subset:continue
             values,report,cm=classification([r['true_label'] for r in subset],[r[column] for r in subset]);values['test_subjects']=len(set(r['subject_id'] for r in subset))
@@ -193,10 +210,10 @@ def inference(config,out,progress):
         dump(out/'calibration_metrics.json',cal);write_csv(out/'calibration_bins.csv',bins);write_csv(out/'risk_coverage_data.csv',coverage)
     dump(out/'overall_metrics.json',metrics);dump(out/'transition_config.json',config['transition'])
     result={'run_id':config['id'],'checkpoint':str(checkpoint),'checkpoint_sha256':checkpoint_hash,'class_order':STAGES,
-      'raw_metrics':metrics.get('raw'),'smoothed_metrics':metrics.get('soft_viterbi'),'per_subject':per_recording,
+      'raw_metrics':metrics.get('raw'),'refined_metrics':metrics.get('refined'),'per_subject':per_recording,
       'evaluation_complete':True,'clinical_validation':False,'model_parameters':model.count_params(),
       'input_repairs':[x for x in inputs if 'repair' in x],
-      'limitations':['Rule-based research profiles; thresholds not clinically validated.','Probabilities are not separately calibrated.','Performance applies only to labeled evaluated inputs.'],
+      'limitations':['HMC training reference is a heterogeneous clinical population; domain counts are descriptive, not disease risk or clinical severity.','Probabilities are not separately calibrated.','Performance applies only to labeled evaluated inputs.'],
       'settings':settings}
     dump(out/'final_results.json',result)
     generate_plots(out,rows,metrics)
@@ -210,11 +227,11 @@ def generate_plots(out,rows,metrics):
     for sid in dict.fromkeys(r['subject_id'] for r in rows):
         sub=[r for r in rows if r['subject_id']==sid]
         fig,ax=plt.subplots(figsize=(14,4))
-        for name,key in [('Ground truth','true_label'),('Raw','raw_prediction'),('Soft-Viterbi','soft_viterbi_prediction')]:
+        for name,key in [('Ground truth','true_label'),('Raw','raw_prediction'),('N1/N2 refined','refined_prediction')]:
             if any(r[key] is None for r in sub):continue
             ax.step([r['timestamp_seconds']/3600 for r in sub],[r[key] for r in sub],where='post',label=name,alpha=.8)
         ax.set_yticks(range(5),STAGES);ax.invert_yaxis();ax.set_xlabel('Recording time (hours)');ax.set_title(sid+' · sleep stages');ax.legend();fig.tight_layout();fig.savefig(out/f'hypnogram_{sid}.png',dpi=160);plt.close(fig)
-    for condition,column in [('raw','raw_prediction'),('soft_viterbi','soft_viterbi_prediction')]:
+    for condition,column in [('raw','raw_prediction'),('refined','refined_prediction')]:
         sub=[r for r in rows if r['true_label'] is not None and r[column] is not None]
         if not sub:continue
         _,_,cm=classification([r['true_label'] for r in sub],[r[column] for r in sub]);fig,ax=plt.subplots(figsize=(6,5));ax.imshow(cm,cmap='Blues');ax.set_xticks(range(5),STAGES);ax.set_yticks(range(5),STAGES);ax.set_xlabel('Predicted');ax.set_ylabel('True');ax.set_title(condition+' confusion matrix')

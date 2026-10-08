@@ -67,14 +67,14 @@ function validateSettings(input) {
   return output;
 }
 class Store {
-  constructor(projectRoot, dataRoot) { this.projectRoot = projectRoot; this.dataRoot = dataRoot; this.baseline = path.join(projectRoot, 'ppt_artifacts'); this.runsRoot = path.join(dataRoot, 'runs'); }
+  constructor(projectRoot, dataRoot) { this.projectRoot = projectRoot; this.dataRoot = dataRoot; this.baseline = path.join(projectRoot, 'refinement_artifacts', 'verified'); this.legacy = path.join(projectRoot, 'ppt_artifacts'); this.runsRoot = path.join(dataRoot, 'runs'); }
   init() { fs.mkdirSync(this.runsRoot, { recursive: true }); }
   settings() { return { ...defaults, ...this.json(path.join(this.dataRoot, 'settings.json'), {}) }; }
   saveSettings(value) { const result = { ...this.settings(), ...validateSettings(value) }; atomicJson(path.join(this.dataRoot,'settings.json'),result); return result; }
   json(file, fallback = null) { try { return JSON.parse(fs.readFileSync(file,'utf8')); } catch (e) { if (e.code === 'ENOENT') return fallback; throw e; } }
   read(dir, name, fallback = null) { const file = confined(dir,name); if (!fs.existsSync(file)) return fallback; return name.endsWith('.csv') ? csv(fs.readFileSync(file,'utf8')) : this.json(file,fallback); }
   directory(id) { return id === 'baseline' ? this.baseline : path.join(this.runsRoot, safeId(id), 'artifacts'); }
-  manifest(id) { return id === 'baseline' ? { id:'baseline', name:'Verified HMC evaluation', kind:'baseline',status:'completed',createdAt:'2026-10-07T07:22:00Z',sourceRun:'HMC-PPT-20261007-01',recordings:['SN009','SN001','SN004','SN022'],step:'Verified results',progress:100 } : this.json(path.join(this.runsRoot, safeId(id),'run.json')); }
+  manifest(id) { return id === 'baseline' ? { id:'baseline', name:'Verified N1/N2 biomarker refinement', kind:'baseline',status:'completed',createdAt:'2026-10-07T07:22:00Z',sourceRun:'HMC-N1N2-20261007',recordings:['SN009','SN001','SN004','SN022'],step:'Verified results',progress:100 } : this.json(path.join(this.runsRoot, safeId(id),'run.json')); }
   runs() {
     const entries = fs.existsSync(this.runsRoot) ? fs.readdirSync(this.runsRoot).filter(x => /^[A-Za-z0-9_-]+$/.test(x)).map(id => this.manifest(id)).filter(Boolean) : [];
     return [...entries.sort((a,b) => b.createdAt.localeCompare(a.createdAt)), ...(fs.existsSync(this.baseline) ? [this.manifest('baseline')] : [])];
@@ -86,9 +86,9 @@ class Store {
     const result = this.read(dir, 'final_results.json', {});
     const metrics = this.read(dir,'overall_metrics.json',{});
     return { manifest, result, metrics, predictions: this.read(dir,'test_epoch_predictions.csv',[]),
-      biomarkers:this.read(dir,'subject_biomarkers.csv',[]), rawReport:this.read(dir,'classification_report.csv',[]),
-      smoothedReport:this.read(dir,'smoothed_classification_report.csv',[]),
-      confusion:this.read(dir,'confusion_matrix_counts.csv',[]),smoothedConfusion:this.read(dir,'smoothed_confusion_matrix_counts.csv',[]),
+      profiles:this.read(dir,'subject_profiles.json',[]),reference:this.read(dir,'reference_stats.json',[]),biomarkers:this.read(dir,'subject_biomarkers.csv',[]), rawReport:this.read(dir,'classification_report.csv',[]),
+      refinedReport:this.read(dir,'refined_classification_report.csv',[]),
+      confusion:this.read(dir,'confusion_matrix_counts.csv',[]),refinedConfusion:this.read(dir,'refined_confusion_matrix_counts.csv',[]),
       calibration:this.read(dir,'calibration_metrics.json',{}),calibrationBins:this.read(dir,'calibration_bins.csv',[]),
       riskCoverage:this.read(dir,'risk_coverage_data.csv',[]), training:this.read(dir,'training_history.csv',[]),
       signals:this.read(dir,'signals.json',{}), artifacts:this.artifacts(id) };
@@ -98,7 +98,7 @@ class Store {
       model:this.read(this.baseline,'hyperparameters.json',{}),layers:this.read(this.baseline,'model_layers.csv',[]),
       dataset:this.read(this.baseline,'split_summary.json',{}),recordings:this.read(this.baseline,'split_subjects.csv',[]),
       distributions:this.read(this.baseline,'stage_distribution.csv',[]),preprocessing:this.read(this.baseline,'preprocessing_config.json',{}),
-      transition:this.read(this.baseline,'transition_config.json',{}),rules:this.read(this.baseline,'risk_rules.json',{}),
+      transition:this.read(this.legacy,'transition_config.json',{}),rules:this.read(this.baseline,'profile_rules.json',{}),
       exampleSignal:this.json(path.join(this.projectRoot,'gui/data/eeg-example.json'),null), stages:STAGES };
   }
   artifacts(id) {

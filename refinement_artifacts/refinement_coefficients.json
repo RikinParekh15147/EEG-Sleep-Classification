@@ -1,0 +1,38 @@
+[
+  {
+    "feature": "sigma_relative",
+    "coefficient": "2.135340"
+  },
+  {
+    "feature": "beta_relative",
+    "coefficient": "-1.783098"
+  },
+  {
+    "feature": "sigma_delta_ratio",
+    "coefficient": "-1.435955"
+  },
+  {
+    "feature": "theta_relative",
+    "coefficient": "1.377252"
+  },
+  {
+    "feature": "theta_delta_ratio",
+    "coefficient": "-1.066003"
+  },
+  {
+    "feature": "alpha_delta_ratio",
+    "coefficient": "0.994630"
+  },
+  {
+    "feature": "alpha_relative",
+    "coefficient": "-0.826812"
+  },
+  {
+    "feature": "delta_relative",
+    "coefficient": "0.762471"
+  },
+  {
+    "feature": "beta_delta_ratio",
+    "coefficient": "0.308964"
+  }
+]

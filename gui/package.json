@@ -8,7 +8,7 @@
     "start": "node scripts/start.cjs",
     "dev": "node scripts/dev.cjs",
     "preview": "node scripts/preview.cjs",
-    "build": "tsc --noEmit && vite build",
+    "build": "node scripts/build.cjs",
     "test": "node --test tests/*.test.cjs",
     "test:python": "python3 -m unittest discover -s tests -p \"test_*.py\"",
     "test:ui": "playwright test",

@@ -1,0 +1,42 @@
+[
+  {
+    "subject": "SN001",
+    "Sleep_Duration_status": "DEVIATED",
+    "Sleep_Continuity_status": "DEVIATED",
+    "Sleep_Initiation_status": "DEVIATED",
+    "Sleep_Architecture_status": "WITHIN_REFERENCE",
+    "deviated_domain_count": "3",
+    "sleep_health_deviation_profile": "High Deviation",
+    "interpretation_note": "Profile is based on deviation from the current..."
+  },
+  {
+    "subject": "SN004",
+    "Sleep_Duration_status": "WITHIN_REFERENCE",
+    "Sleep_Continuity_status": "DEVIATED",
+    "Sleep_Initiation_status": "DEVIATED",
+    "Sleep_Architecture_status": "DEVIATED",
+    "deviated_domain_count": "3",
+    "sleep_health_deviation_profile": "High Deviation",
+    "interpretation_note": "Profile is based on deviation from the current..."
+  },
+  {
+    "subject": "SN009",
+    "Sleep_Duration_status": "WITHIN_REFERENCE",
+    "Sleep_Continuity_status": "DEVIATED",
+    "Sleep_Initiation_status": "WITHIN_REFERENCE",
+    "Sleep_Architecture_status": "WITHIN_REFERENCE",
+    "deviated_domain_count": "1",
+    "sleep_health_deviation_profile": "Mild Deviation",
+    "interpretation_note": "Profile is based on deviation from the current..."
+  },
+  {
+    "subject": "SN022",
+    "Sleep_Duration_status": "WITHIN_REFERENCE",
+    "Sleep_Continuity_status": "DEVIATED",
+    "Sleep_Initiation_status": "WITHIN_REFERENCE",
+    "Sleep_Architecture_status": "DEVIATED",
+    "deviated_domain_count": "2",
+    "sleep_health_deviation_profile": "Moderate Deviation",
+    "interpretation_note": "Profile is based on deviation from the current..."
+  }
+]

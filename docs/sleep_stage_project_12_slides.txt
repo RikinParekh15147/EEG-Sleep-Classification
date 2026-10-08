@@ -1,0 +1,159 @@
+Slide 1
+FINAL PROJECT REPORT
+EEG Sleep Classification and Reference-Based Sleep-Health Profiling
+Existing evidential Transformer with targeted N1/N2 spectral refinement
+Rikin Parekh · Om Ahuja
+23BIT044 · 23BIT014
+Guide: Dr. Santosh Sathpathy
+Information and Communication Technology
+Pandit Deendayal Energy University
+Verified notebook reproduction · 7 October 2026
+
+Slide 2
+HMC data and EEG input
+Partition
+Recordings
+Stored epochs
+Training
+16
+15,216
+Validation
+4
+3,619
+Testing
+4
+3,109
+Total
+24
+21,944
+HMC v1.1: 151 clinical recordings; subset 24. Four channels, 100 Hz, 30 s (4 × 3,000). SN001: 95-minute segment.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+02 / 12
+
+Slide 3
+Retained Fast SCFormer-U architecture
+4 × 3,000 EEG → Conv1D 64 (kernel 7, stride 4) → Conv1D 128 (kernel 5, stride 4)
+Self-attention: 4 heads, key dimension 16; residual normalization and feed-forward layers
+Bidirectional LSTM: 64 units per direction; pooling and dense evidence head
+Five softplus evidence outputs; 226,309 total parameters. Attention and recurrence operate within the epoch.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+03 / 12
+
+Slide 4
+Nine EEG features for N1/N2 refinement
+Feature group
+Features
+Relative band power
+Delta, Theta, Alpha, Sigma, Beta
+Ratios to Delta
+Sigma/Delta, Theta/Delta, Alpha/Delta, Beta/Delta
+Frequency bands (Hz)
+0.5–4; 4–8; 8–12; 12–16; 16–30
+Candidate gate
+Transformer predicts N1 or N2
+These are project feature boundaries, not AASM staging definitions. Sigma power does not measure spindle density.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+04 / 12
+
+Slide 5
+Training and inference gates
+Fit the refiner only on training epochs where the true stage AND the Transformer prediction are N1/N2.
+Training subset: 1,278 N1 and 4,588 N2 epochs; 5,866 total.
+StandardScaler → LogisticRegression(class_weight="balanced", max_iter=2000, random_state=42).
+At inference, gate by the Transformer prediction only. Ground truth is never used to route test epochs.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+05 / 12
+
+Slide 6
+Effect of targeted N1/N2 refinement
+Accuracy +3.89 pp; macro F1 +2.10 pp using unrounded values. N1 F1 +4.03 pp; N2 F1 +6.45 pp.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+06 / 12
+
+Slide 7
+Sleep architecture measurements
+Metric
+Definition
+TST
+N1 + N2 + N3 + REM time
+Sleep efficiency
+100 × TST / evaluated recording duration
+Stage percentages
+100 × stage sleep time / TST
+WASO
+Wake time after first sleep to sequence end
+Fragmentation
+All stage transitions / TST hours
+Recording duration is an evaluated-window measure. Contiguous timing is assumed for the notebook NPZ sequences.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+07 / 12
+
+Slide 8
+Training reference and four-domain profiles
+Reference: 16 training recordings; test matrix: ID + 22 numeric fields. Compare 21 fields, excluding duration of the evaluated window.
+z = (value − mean) / sample SD. Below P10 → LOW; P10–P90 → NORMAL; above P90 → HIGH.
+Domains: Duration (TST); Continuity (efficiency, WASO, awakenings, fragmentation); Initiation (SOL); Architecture (N1/N2/N3/REM %).
+Any out-of-range metric marks its domain. 0 / 1 / 2 / 3–4 deviated domains → Within Reference / Mild / Moderate / High Deviation.
+Dataset reference, not healthy norms. EEG deviations are displayed separately; profile levels are descriptive counts.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+08 / 12
+
+Slide 9
+Test-recording domain profiles
+Recording
+Duration
+Continuity
+Initiation
+Architecture
+Overall
+SN001
+Deviated
+Deviated
+Deviated
+Within ref.
+High Deviation
+SN004
+Within ref.
+Deviated
+Deviated
+Deviated
+High Deviation
+SN009
+Within ref.
+Deviated
+Within ref.
+Within ref.
+Mild Deviation
+SN022
+Within ref.
+Deviated
+Within ref.
+Deviated
+Moderate Deviation
+SN001: segment profile. HMC reference deviations are neither disease-risk predictions nor validated severity levels.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+09 / 12
+
+Slide 10
+Interactive Sleep Studio dashboard
+Select SN001/SN004/SN009/SN022. Inspect domains, sleep architecture, nine EEG features, z-scores, P10/P90, and source artifacts.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+10 / 12
+
+Slide 11
+Complete implemented pipeline
+Raw EEG → existing preprocessing → evidential Transformer → targeted N1/N2 spectral refinement
+Refined hypnogram → sleep architecture; EEG → spectral biomarkers
+Recording feature matrix → 16-recording training reference → z-scores + P10/P90 regions
+Four domain statuses → descriptive overall deviation profile → interactive dashboard and report exports
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+11 / 12
+
+Slide 12
+Limitations and unimplemented extensions
+No explicit spindle detector, dedicated formal SWA metric, or spectral edge frequency.
+No clinically validated normative ranges, disease prediction, or diagnostic severity classification.
+No documented repeated-night participant mapping for true longitudinal personalization.
+Small clinical reference (16 recordings), assumed NPZ continuity, in-sample reference architecture, and a partial SN001 input.
+Source: HMC-N1N2-20261007 · notebook and reproduced artifacts
+12 / 12

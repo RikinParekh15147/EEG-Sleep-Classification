@@ -9,6 +9,7 @@ const { report } = require('./report.cjs');
 const guiRoot=path.resolve(__dirname,'..'),projectRoot=path.dirname(guiRoot);
 let window,service,store;
 app.setName('Sleep Studio');
+if(process.env.SLEEP_DATA_DIR){const directory=path.resolve(process.env.SLEEP_DATA_DIR);fs.mkdirSync(directory,{recursive:true});app.setPath('userData',directory);}
 protocol.registerSchemesAsPrivileged([{scheme:'sleep',privileges:{standard:true,secure:true,supportFetchAPI:true,stream:true}}]);
 if(!app.requestSingleInstanceLock())app.quit();
 app.on('second-instance',()=>{if(window){if(window.isMinimized())window.restore();window.focus();}});
@@ -37,7 +38,7 @@ async function exportRun(id,format,artifact) {
 async function exportPdf(id) {
   const selected=await dialog.showSaveDialog(window,{defaultPath:id+'-report.pdf',filters:[{name:'PDF report',extensions:['pdf']}]});if(selected.canceled)return null;
   const hidden=new BrowserWindow({show:false,webPreferences:{sandbox:true,nodeIntegration:false,contextIsolation:true}});
-  try {const run=store.run(id);const images=run.artifacts.filter(f=>/^(hypnogram_(?:subject_)?SN\d+|smoothed_confusion_matrix_normalized|soft_viterbi_confusion_matrix|reliability_diagram|risk_coverage_curve)\.png$/.test(f.path)).map(f=>({title:f.path.replace(/_/g,' ').replace('.png',''),data:'data:image/png;base64,'+fs.readFileSync(store.artifactFile(id,f.path)).toString('base64')}));await hidden.loadURL('data:text/html;charset=utf-8,'+encodeURIComponent(report(run,images)));const pdf=await hidden.webContents.printToPDF({printBackground:true,pageSize:'A4'});fs.writeFileSync(selected.filePath,pdf);return selected.filePath;}finally{hidden.destroy();}
+  try {const run=store.run(id);const images=run.artifacts.filter(f=>/^(hypnogram_(?:subject_)?SN\d+|refined_confusion_matrix|raw_confusion_matrix|performance_comparison|reliability_diagram|risk_coverage_curve)\.png$/.test(f.path)).map(f=>({title:f.path.replace(/_/g,' ').replace('.png',''),data:'data:image/png;base64,'+fs.readFileSync(store.artifactFile(id,f.path)).toString('base64')}));await hidden.loadURL('data:text/html;charset=utf-8,'+encodeURIComponent(report(run,images)));const pdf=await hidden.webContents.printToPDF({printBackground:true,pageSize:'A4'});fs.writeFileSync(selected.filePath,pdf);return selected.filePath;}finally{hidden.destroy();}
 }
 app.whenReady().then(()=>{
   store=new Store(projectRoot,process.env.SLEEP_DATA_DIR||app.getPath('userData'));store.init();
@@ -57,7 +58,7 @@ app.whenReady().then(()=>{
     importFiles:async()=>{const result=await dialog.showOpenDialog(window,{properties:['openFile','multiSelections'],filters:[{name:'EEG recordings and annotations',extensions:['edf','npz']}]});return result.canceled?[]:service.registerImports(result.filePaths);},
     artifacts:id=>store.artifacts(id),artifactText:(id,file)=>store.artifactText(id,file),exportRun,exportPdf,
     openArtifact:(id,file)=>shell.openPath(store.artifactFile(id,file)),openExternal:external,authReply:value=>service.authReply(value),signal:(id,recording,epoch)=>service.signal(id,recording,epoch)};
-  for(const [method,handler] of Object.entries(handlers))ipcMain.handle('sleep:'+method,async(event,...args)=>{if(!trusted(event))throw new Error('Untrusted app request');return handler(...args);});
+  for(const [method,handler] of Object.entries(handlers))ipcMain.handle('sleep:'+method,async(event,...args)=>{if(!trusted(event))throw new Error('Untrusted app request');try{return await handler(...args);}catch(error){if(service.closed)return null;throw error;}});
   session.defaultSession.setPermissionRequestHandler((_webContents,_permission,callback)=>callback(false));
   window=new BrowserWindow({width:1480,height:960,minWidth:1100,minHeight:740,backgroundColor:'#0b1214',title:'Sleep Studio',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
   window.webContents.setWindowOpenHandler(({url})=>{external(url).catch(()=>{});return {action:'deny'};});
