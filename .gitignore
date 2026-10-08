@@ -32,3 +32,15 @@ refinement_artifacts/source_renders/
 refinement_artifacts/renders/
 refinement_artifacts/pdf_renders/
 refinement_artifacts/*.zip
+# Local mid-viva drafts, renders, and validation output
+mid_viva_artifacts/build/renders*/
+mid_viva_artifacts/build/*.json
+mid_viva_artifacts/build/*.pptx
+mid_viva_artifacts/build/*.pdf
+mid_viva_artifacts/build/*.ndjson
+mid_viva_artifacts/build/*/*.pptx
+mid_viva_artifacts/build/*/*.json
+mid_viva_artifacts/build/*/*.ndjson
+mid_viva_artifacts/build/**/.chart-data-*/
+mid_viva_artifacts/build/.chart-data-*/
+.chart-data-*/
