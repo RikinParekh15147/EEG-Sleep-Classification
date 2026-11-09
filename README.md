@@ -4,6 +4,8 @@ Automated EEG sleep staging using a retained Fast SCFormer-U classifier, targete
 
 **Main implementation:** [Biomarker_N1_N2_Refinement.ipynb](Biomarker_N1_N2_Refinement.ipynb). **Verified experiment:** HMC-N1N2-20261007.
 
+**LaTeX documentation:** [Springer manuscript and build instructions](docs/README.md) · [Manuscript source](docs/main.tex) · [Compiled PDF](docs/main.pdf).
+
 **Use for the mid-viva:** [Final blue 15-slide PowerPoint, mentor first](mid_viva_artifacts/output/EEG_Sleep_Mid_Viva_Blue_15_Slides_Mentor_First_Final.pptx) · [PDF](mid_viva_artifacts/output/EEG_Sleep_Mid_Viva_Blue_15_Slides_Mentor_First_Final.pdf).
 
 ## Team
